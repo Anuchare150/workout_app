@@ -35,9 +35,20 @@
     .panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    
+    /* Cross-platform Form Fixes for iOS / Safari */
     input[type="number"], input[type="date"], select, textarea, input[type="text"]{
-      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;
+      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;
+      color:#ffffff !important;
+      -webkit-appearance: none;
+      appearance: none;
     }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
     .col-3{grid-column:span 3}
     .col-2{grid-column:span 2}
     .col-4{grid-column:span 4}
@@ -54,7 +65,14 @@
     .ex-item input[type="checkbox"]{transform:scale(1.15)}
     .ex-name{min-width:150px;font-weight:700}
     .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
-    .small-input{width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
+    
+    /* Small inline inputs inside exercise panels */
+    .small-input{
+      width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;
+      color:#ffffff !important;
+      -webkit-appearance: none;
+      appearance: none;
+    }
 
     /* plan area */
     .plan{display:flex;flex-direction:column;gap:10px}
