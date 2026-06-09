@@ -36,12 +36,16 @@
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     
-    /* Cross-platform Form Fixes for iOS / Safari */
+    /* DEFINITIVE FIX: Replaced background: transparent with a solid color to force iOS Safari to render white text */
     input[type="number"], input[type="date"], select, textarea, input[type="text"]{
-      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;
-      color:#ffffff !important;
-      -webkit-appearance: none;
-      appearance: none;
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.15);
+      background-color: #162235 !important;
+      color: #ffffff !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
     }
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
@@ -66,12 +70,16 @@
     .ex-name{min-width:150px;font-weight:700}
     .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
     
-    /* Small inline inputs inside exercise panels */
+    /* DEFINITIVE FIX: Applied solid background color to the small inner workout boxes too */
     .small-input{
-      width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;
-      color:#ffffff !important;
-      -webkit-appearance: none;
-      appearance: none;
+      width:72px;
+      padding:6px;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,0.15);
+      background-color: #162235 !important;
+      color: #ffffff !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
     }
 
     /* plan area */
@@ -87,7 +95,7 @@
     .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
 
     .controls{display:flex;gap:8px;align-items:center}
-    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:transparent;color:#fff;resize:vertical}
+    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:#162235;color:#fff;resize:vertical}
 
     .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700;color:#fff}
     .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700}
@@ -181,11 +189,8 @@
   </div>
 
   <script id="appScript">
-    // Single-file app: Workout Planner (Upper / Leg / Cardio)
-    // Data saved in localStorage under key
     const STORAGE_KEY = 'simple_workout_planner_v1';
 
-    // Exercise catalogs
     const CATALOG = {
       leg: [
         { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
@@ -201,22 +206,19 @@
         { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
       ],
       cardio: [
-        { id:'treadmill', name:'Treadmill Running', defaultDuration:20 /* minutes */ }
+        { id:'treadmill', name:'Treadmill Running', defaultDuration:20 }
       ]
     };
 
-    // Utilities
     const qs = s => document.querySelector(s);
     const qsa = s => Array.from(document.querySelectorAll(s));
     function fmtDate(d){ const y=d.getFullYear(); const m=('0'+(d.getMonth()+1)).slice(-2); const day=('0'+d.getDate()).slice(-2); return `${y}-${m}-${day}`; }
     function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
     function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
-    // Load/save
     function loadPlan(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
     function savePlan(plan){ localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); }
 
-    // Build exercises UI depending on selected type
     function buildExercisesUI(type){
       const area = qs('#exercisesArea');
       area.innerHTML = '';
@@ -224,7 +226,6 @@
       list.forEach(ex => {
         const el = document.createElement('div');
         el.className = 'ex-item';
-        // checkbox, name
         const ck = document.createElement('input'); ck.type='checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
         const name = document.createElement('div'); name.className='ex-name'; name.textContent = ex.name;
         el.appendChild(ck);
@@ -234,7 +235,6 @@
         controls.className = 'ex-controls';
 
         if(type === 'cardio'){
-          // duration (minutes) and estimated calories
           const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)';
           dur.dataset.prop = 'duration';
           const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
@@ -243,7 +243,6 @@
           controls.appendChild(durLabel);
           controls.appendChild(cal);
         } else {
-          // weight (kg), sets, reps
           const w = document.createElement('input'); w.type='number'; w.step='0.5'; w.className='small-input'; w.value = ex.defaultWeight || 0; w.dataset.prop='weight'; w.title='Weight (kg)';
           const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
           const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
@@ -257,7 +256,6 @@
       });
     }
 
-    // Create session object from current form UI
     function readSessionFromForm(){
       const date = qs('#sessionDate').value || fmtDate(new Date());
       const type = qs('#workoutType').value;
@@ -311,7 +309,6 @@
       };
     }
 
-    // Render plan area
     function renderPlan(){
       const plan = loadPlan();
       const area = qs('#planArea');
@@ -381,7 +378,6 @@
 
       area.appendChild(container);
 
-      // Wire up buttons inside plan
       qsa('.done-btn').forEach(btn=>{
         btn.addEventListener('click', (ev)=>{
           const id = btn.dataset.id;
@@ -395,7 +391,6 @@
         });
       });
 
-      // Inline edits for inputs (weight/sets/reps/duration/cal)
       qsa('input[data-session]').forEach(inp=>{
         inp.addEventListener('change', ()=> {
           const sessId = inp.dataset.session;
@@ -406,7 +401,6 @@
         });
       });
 
-      // export now button (top-right)
       const expBtn = qs('#exportNow');
       if(expBtn) expBtn.addEventListener('click', ()=> {
         const plan = loadPlan();
@@ -460,7 +454,6 @@
       plan.push(session);
       savePlan(plan);
       renderPlan();
-      // clear checkboxes
       qsa('#exercisesArea input[type="checkbox"]').forEach(cb=>cb.checked=false);
       qs('#sessionCalories').value = 0;
       qs('#sessionNotes').value = '';
@@ -471,7 +464,6 @@
       if(confirm('Delete all saved sessions?')){ savePlan([]); renderPlan(); showStatus('All sessions cleared.'); }
     }
 
-    // Export/Import wiring
     function exportPlanToBox(){
       const plan = loadPlan();
       qs('#exportBox').value = JSON.stringify(plan, null, 2);
@@ -483,9 +475,7 @@
       try{
         const parsed = JSON.parse(raw);
         if(!Array.isArray(parsed)) {
-          // support wrapped format if older export was an object
           if(parsed.days && Array.isArray(parsed.days)) {
-            // transform to sessions array (if present as object)
             const sessions = parsed.days.map(d => {
               return {
                 id: d.id || ('s'+Date.now()),
@@ -515,13 +505,11 @@
       }
     }
 
-    // Status small helper
     function showStatus(msg, ok=true){
       if(!ok) alert(msg);
       else console.log(msg);
     }
 
-    // Download CSS / JS functions — read the style and script tags and save their text content
     function downloadContent(filename, content){
       const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -534,11 +522,8 @@
       URL.revokeObjectURL(url);
     }
 
-    // Init wiring
     function init(){
-      // default date = today
       if(!qs('#sessionDate').value) qs('#sessionDate').value = fmtDate(new Date());
-      // build initial exercises UI
       const typeSelect = qs('#workoutType');
       buildExercisesUI(typeSelect.value);
       typeSelect.addEventListener('change', ()=> {
@@ -561,11 +546,9 @@
         downloadContent('script.js', content);
       });
 
-      // render stored plan
       renderPlan();
     }
 
-    // Start
     init();
   </script>
 </body>
