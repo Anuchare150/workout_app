@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Workout Planner — Mobile Friendly Inputs</title>
+  <title>Workout Planner — Visible Selections (Fixed)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <style>
     :root{
@@ -12,25 +12,26 @@
       --muted: rgba(255,255,255,0.72);
       --accent1: #7c3aed;
       --accent2: #06b6d4;
+      --accent-strong: #4f46e5;
       --good: #10b981;
       --danger: #ef4444;
       --card-radius:12px;
-      --input-bg:#122033;
-      --input-border: rgba(255,255,255,0.12);
+      --input-bg:#0f2238;
+      --input-border: rgba(255,255,255,0.10);
+      --highlight-bg: rgba(79,70,229,0.12);
       --max-width:1100px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
       color:#ffffff;padding:18px;-webkit-font-smoothing:antialiased;
     }
 
     .container{max-width:var(--max-width);margin:0 auto}
-    .app{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:16px;border:1px solid rgba(255,255,255,0.03)}
+    .app{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:var(--card-radius);padding:16px;border:1px solid rgba(255,255,255,0.03)}
 
     header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
     .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
@@ -41,7 +42,7 @@
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 
-    /* Inputs: Mobile / iOS focused fixes */
+    /* Inputs: Mobile friendly */
     input, select, textarea {
       width:100%;
       padding:10px;
@@ -49,8 +50,8 @@
       border:1px solid var(--input-border);
       background: var(--input-bg);
       color: #fff;
-      font-size:16px; /* prevent iOS auto-zoom */
-      -webkit-text-fill-color: #fff; /* enforce color in iOS */
+      font-size:16px;
+      -webkit-text-fill-color: #fff;
       caret-color: #fff;
       -webkit-appearance: none;
       appearance: none;
@@ -73,14 +74,11 @@
       text-align:center;
     }
 
-    /* specific fixes for number inputs across browsers */
+    /* number inputs appearance consistency */
     input[type="number"]{-moz-appearance:textfield;}
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type="number"] { -moz-appearance: textfield; -webkit-appearance: textfield; }
-
-    /* placeholder visibility */
-    ::placeholder { color: rgba(255,255,255,0.45); -webkit-text-fill-color: rgba(255,255,255,0.45); opacity:1; }
+    ::placeholder { color: rgba(255,255,255,0.45); opacity:1; }
 
     .col-3{grid-column:span 3}
     .col-2{grid-column:span 2}
@@ -91,14 +89,38 @@
     button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#ffffff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
     button.ghost{background:transparent;color:#ffffff;border:1px solid rgba(255,255,255,0.12)}
 
-    .ex-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-    .ex-item{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
-    .ex-item input[type="checkbox"]{transform:scale(1.15);width:20px;height:20px}
-    .ex-name{min-width:140px;font-weight:700}
+    /* Exercises list with clear selected visuals */
+    .ex-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .ex-item{
+      display:flex;gap:12px;align-items:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));
+      padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+      transition: background .18s, box-shadow .18s, border-color .18s;
+    }
+    .ex-item.selected{
+      background: var(--highlight-bg);
+      border-color: rgba(79,70,229,0.28);
+      box-shadow: 0 6px 18px rgba(79,70,229,0.08);
+    }
+    .ex-name{min-width:140px;font-weight:700;color:#fff}
     .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
 
-    .plan{display:flex;flex-direction:column;gap:10px}
-    .session{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    /* Custom checkbox (visible on all platforms) */
+    .checkbox-wrap{position:relative;display:inline-flex;align-items:center;gap:8px}
+    .checkbox-hidden{position:absolute;opacity:0;pointer-events:none;height:0;width:0}
+    .custom-checkbox{
+      width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.12);display:inline-flex;align-items:center;justify-content:center;
+      background:transparent;color:transparent;transition:all .12s;
+      flex:0 0 22px;
+    }
+    .custom-checkbox svg{width:14px;height:14px;opacity:0;transform:scale(0.6);transition:all .12s}
+    .ex-item.selected .custom-checkbox{background:linear-gradient(90deg,var(--accent-strong),var(--accent2));border-color:transparent;color:#fff}
+    .ex-item.selected .custom-checkbox svg{opacity:1;transform:scale(1)}
+    /* make clicking the name toggle checkbox */
+    .ex-name[role="button"]{cursor:pointer}
+
+    .plan{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .session{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.01);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
     .session .meta{width:170px;flex-shrink:0}
     .session .date{font-weight:800}
     .session .weekday{color:var(--muted);font-size:13px;margin-top:4px}
@@ -131,7 +153,7 @@
         <div class="logo">WP</div>
         <div>
           <h1>Workout Planner</h1>
-          <p class="lead">Leg, Upper Body, Cardio — set kg, sets, reps, and durations. Mobile friendly inputs.</p>
+          <p class="lead">Leg, Upper Body, Cardio — set kg, sets, reps, and durations. Selections are now clearly visible.</p>
         </div>
       </header>
 
@@ -162,7 +184,7 @@
             <div class="col-12">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
                 <div style="font-weight:800">Exercises</div>
-                <div class="muted">Tap to select, edit kg/sets/reps or duration/cal for cardio.</div>
+                <div class="muted">Tap an exercise or its name to select. Selected items are highlighted.</div>
               </div>
               <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
             </div>
@@ -178,7 +200,7 @@
         </form>
       </div>
 
-      <div id="planArea"></div>
+      <div id="planArea" class="plan"></div>
 
       <div class="panel" style="margin-top:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -201,8 +223,8 @@
   </div>
 
   <script>
-    // Mobile-friendly Workout Planner
-    const STORAGE_KEY = 'workout_planner_mobile_v1';
+    // Fixes selection visibility: toggles .selected and shows a custom checkbox tick.
+    const STORAGE_KEY = 'workout_planner_selected_fix_v1';
 
     const CATALOG = {
       leg: [
@@ -226,68 +248,97 @@
     const qs = s => document.querySelector(s);
     const qsa = s => Array.from(document.querySelectorAll(s));
 
-    function fmtDate(d){
-      return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`;
-    }
+    function fmtDate(d){ return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`; }
     function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
     function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
     function loadPlan(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
     function savePlan(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 
-    // Build exercise selection UI for chosen type
     function buildExercisesUI(type){
       const area = qs('#exercisesArea');
       area.innerHTML = '';
-      (CATALOG[type] || []).forEach(ex => {
-        const el = document.createElement('div');
-        el.className = 'ex-item';
-        // checkbox and name
-        const ck = document.createElement('input'); ck.type = 'checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
-        const nameDiv = document.createElement('div'); nameDiv.className = 'ex-name'; nameDiv.textContent = ex.name;
-        el.appendChild(ck);
-        el.appendChild(nameDiv);
+      (CATALOG[type] || []).forEach(ex=>{
+        const item = document.createElement('div');
+        item.className = 'ex-item';
+        // checkbox wrap
+        const wrap = document.createElement('label');
+        wrap.className = 'checkbox-wrap';
+        wrap.style.margin = '0';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'checkbox-hidden';
+        checkbox.dataset.ex = ex.id;
+        checkbox.id = 'ck_' + ex.id;
+        // custom visual
+        const custom = document.createElement('span');
+        custom.className = 'custom-checkbox';
+        custom.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        wrap.appendChild(checkbox);
+        wrap.appendChild(custom);
 
-        // controls
-        const ctrl = document.createElement('div'); ctrl.className = 'ex-controls';
+        const name = document.createElement('div');
+        name.className = 'ex-name';
+        name.textContent = ex.name;
+        name.setAttribute('role','button');
+        name.setAttribute('tabindex','0');
+
+        // controls container
+        const controls = document.createElement('div');
+        controls.className = 'ex-controls';
+
         if(type === 'cardio'){
-          const dur = document.createElement('input'); dur.type = 'number'; dur.inputMode = 'numeric'; dur.min = 1; dur.value = ex.defaultDuration || 20;
-          dur.className = 'small-input'; dur.dataset.prop = 'duration';
-          const durLabel = document.createElement('div'); durLabel.className = 'muted'; durLabel.style.fontSize = '12px'; durLabel.textContent = 'min';
-          const cal = document.createElement('input'); cal.type = 'number'; cal.inputMode = 'numeric'; cal.min = 0; cal.value = 0; cal.className = 'small-input'; cal.dataset.prop = 'calories';
-          ctrl.appendChild(dur); ctrl.appendChild(durLabel); ctrl.appendChild(cal);
+          const dur = document.createElement('input'); dur.type = 'number'; dur.min = 1; dur.value = ex.defaultDuration || 20; dur.className = 'small-input'; dur.dataset.prop = 'duration';
+          const durLabel = document.createElement('div'); durLabel.className = 'muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
+          const cal = document.createElement('input'); cal.type = 'number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories';
+          controls.appendChild(dur); controls.appendChild(durLabel); controls.appendChild(cal);
         } else {
-          const weight = document.createElement('input'); weight.type = 'number'; weight.inputMode = 'decimal'; weight.step = '0.5'; weight.className = 'small-input'; weight.value = ex.defaultWeight || 0; weight.dataset.prop = 'weight';
-          const kg = document.createElement('div'); kg.className = 'muted'; kg.style.fontSize = '12px'; kg.textContent = 'kg';
-          const sets = document.createElement('input'); sets.type = 'number'; sets.inputMode = 'numeric'; sets.min = 1; sets.className = 'small-input'; sets.value = ex.sets || 3; sets.dataset.prop = 'sets';
-          const reps = document.createElement('input'); reps.type = 'number'; reps.inputMode = 'numeric'; reps.min = 1; reps.className = 'small-input'; reps.value = ex.reps || 10; reps.dataset.prop = 'reps';
-          ctrl.appendChild(weight); ctrl.appendChild(kg); ctrl.appendChild(sets); ctrl.appendChild(reps);
+          const weight = document.createElement('input'); weight.type='number'; weight.step='0.5'; weight.className='small-input'; weight.value = ex.defaultWeight || 0; weight.dataset.prop='weight';
+          const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
+          const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
+          const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
+          controls.appendChild(weight); controls.appendChild(kg); controls.appendChild(sets); controls.appendChild(reps);
         }
-        el.appendChild(ctrl);
-        area.appendChild(el);
+
+        item.appendChild(wrap);
+        item.appendChild(name);
+        item.appendChild(controls);
+        area.appendChild(item);
+
+        // Toggle selection visuals when checkbox changes
+        const toggleSelected = () => {
+          if(checkbox.checked) item.classList.add('selected'); else item.classList.remove('selected');
+        };
+        checkbox.addEventListener('change', toggleSelected);
+
+        // Clicking the name toggles checkbox (improves tap area)
+        name.addEventListener('click', ()=> { checkbox.checked = !checkbox.checked; toggleSelected(); });
+        name.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); checkbox.checked = !checkbox.checked; toggleSelected(); } });
+
+        // Ensure initial state not selected
+        toggleSelected();
       });
     }
 
-    // Read session data from form
     function readSessionForm(){
       const date = qs('#sessionDate').value || fmtDate(new Date());
       const type = qs('#workoutType').value;
       const exercises = [];
       qsa('#exercisesArea .ex-item').forEach(item=>{
-        const checkbox = item.querySelector('input[type="checkbox"]');
-        if(!checkbox || !checkbox.checked) return;
-        const exId = checkbox.dataset.ex;
+        const ck = item.querySelector('input[type="checkbox"]');
+        if(!ck || !ck.checked) return;
+        const exId = ck.dataset.ex;
         const catalog = (CATALOG[type] || []).find(e => e.id === exId);
         if(!catalog) return;
         if(type === 'cardio'){
           const duration = parseInt(item.querySelector('[data-prop="duration"]').value) || catalog.defaultDuration || 20;
           const calories = parseInt(item.querySelector('[data-prop="calories"]').value) || 0;
-          exercises.push({ id: exId, name: catalog.name, durationMin: duration, calories });
+          exercises.push({ id:exId, name:catalog.name, durationMin:duration, calories });
         } else {
           const weightKg = parseFloat(item.querySelector('[data-prop="weight"]').value) || catalog.defaultWeight || 0;
           const sets = parseInt(item.querySelector('[data-prop="sets"]').value) || catalog.sets || 3;
           const reps = parseInt(item.querySelector('[data-prop="reps"]').value) || catalog.reps || 10;
-          exercises.push({ id: exId, name: catalog.name, weightKg, sets, reps });
+          exercises.push({ id:exId, name:catalog.name, weightKg, sets, reps });
         }
       });
       return {
@@ -302,7 +353,6 @@
       };
     }
 
-    // Render saved plan
     function renderPlan(){
       const plan = loadPlan();
       const area = qs('#planArea');
@@ -311,28 +361,24 @@
         area.innerHTML = '<div class="panel muted">No workout sessions recorded yet.</div>';
         return;
       }
-
-      plan.forEach(session => {
+      plan.forEach(session=>{
         const card = document.createElement('div'); card.className = 'session';
         const meta = document.createElement('div'); meta.className = 'meta';
         meta.innerHTML = `<div class="date">${session.date}</div>
                           <div class="weekday">${session.weekday} · ${session.type.toUpperCase()}</div>
                           <div style="margin-top:6px" class="muted">Kcal: ${session.calories}</div>
-                          <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: ' + session.notes : ''}</div>
+                          <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: '+session.notes : ''}</div>
                           <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
-                          <div style="margin-top:8px"><button class="trash" data-id="${session.id}" title="Delete">Delete</button></div>`;
+                          <div style="margin-top:8px"><button class="trash" data-id="${session.id}">Delete</button></div>`;
         card.appendChild(meta);
 
         const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
         const table = document.createElement('table');
         let thead = '<thead>';
-        if(session.type === 'cardio'){
-          thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
-        } else {
-          thead += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
-        }
+        if(session.type === 'cardio') thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
+        else thead += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
         let tbody = '<tbody>';
-        session.exercises.forEach(ex => {
+        session.exercises.forEach(ex=>{
           if(session.type === 'cardio'){
             tbody += `<tr><td><strong>${ex.name}</strong></td>
                       <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="durationMin" value="${ex.durationMin}"></td>
@@ -352,109 +398,25 @@
         area.appendChild(card);
       });
 
-      // Wire controls
-      qsa('.done-btn').forEach(b => b.addEventListener('click', () => {
+      // wire plan controls
+      qsa('.done-btn').forEach(b => b.addEventListener('click', ()=>{
         const id = b.dataset.id;
-        const p = loadPlan(); const s = p.find(x => x.id === id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
+        const p = loadPlan(); const s = p.find(x=>x.id===id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
       }));
-      qsa('.trash').forEach(b => b.addEventListener('click', () => {
+      qsa('.trash').forEach(b => b.addEventListener('click', ()=>{
         if(!confirm('Delete session?')) return;
         const id = b.dataset.id;
         const p = loadPlan().filter(s => s.id !== id);
         savePlan(p); renderPlan();
       }));
 
-      // Inline edits: use 'input' for immediate feedback on mobile
-      qsa('input[data-sid]').forEach(inp => {
+      // inline edits: update on input for instant save (use input & blur events)
+      qsa('input[data-sid]').forEach(inp=>{
         inp.addEventListener('input', () => {
           const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
           const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
           const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
-          // parse accordingly
           if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
           else ex[field] = parseInt(inp.value) || 0;
           savePlan(p);
         });
-        // apply change on blur to re-render to keep UI updated & consistent
-        inp.addEventListener('blur', () => renderPlan());
-      });
-    }
-
-    // Download helpers
-    function downloadFile(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    // Init app wiring
-    function init(){
-      qs('#sessionDate').value = fmtDate(new Date());
-      buildExercisesUI(qs('#workoutType').value);
-
-      qs('#workoutType').addEventListener('change', (e) => buildExercisesUI(e.target.value));
-
-      qs('#addSessionBtn').addEventListener('click', () => {
-        const s = readSessionForm();
-        if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
-        const plan = loadPlan(); plan.push(s); savePlan(plan); renderPlan();
-        // reset selections
-        qsa('#exercisesArea input[type="checkbox"]').forEach(cb => cb.checked = false);
-        qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
-      });
-
-      qs('#clearAllBtn').addEventListener('click', () => {
-        if(!confirm('Clear all saved sessions?')) return;
-        savePlan([]); renderPlan();
-      });
-
-      qs('#exportBtn').addEventListener('click', () => {
-        const data = JSON.stringify(loadPlan(), null, 2);
-        qs('#exportBox').value = data;
-        try { navigator.clipboard && navigator.clipboard.writeText(data); } catch(e){}
-        alert('JSON placed in the box and (if allowed) copied to clipboard.');
-      });
-
-      qs('#importBtn').addEventListener('click', () => {
-        const raw = qs('#exportBox').value.trim();
-        if(!raw){ alert('Paste JSON into the box to import.'); return; }
-        try {
-          const parsed = JSON.parse(raw);
-          if(!Array.isArray(parsed)) throw new Error('Expected an array of sessions');
-          savePlan(parsed);
-          renderPlan();
-          alert('Import complete.');
-        } catch (err) {
-          alert('Import failed: ' + (err && err.message ? err.message : 'invalid JSON'));
-        }
-      });
-
-      // Download CSS / JS: return the <style> and <script> content for saving
-      qs('#downloadCss').addEventListener('click', () => {
-        const content = Array.from(document.querySelectorAll('style')).map(s => s.textContent).join('\n\n');
-        downloadFile('style.css', content);
-      });
-      qs('#downloadJs').addEventListener('click', () => {
-        // gather only the main script (this one)
-        const script = document.querySelector('script[data-main="true"]');
-        const content = script ? script.textContent : '// script content not found';
-        downloadFile('script.js', content);
-      });
-
-      renderPlan();
-    }
-
-    // Expose small helper used in markup
-    window.fmtDate = fmtDate;
-    window.buildExercisesUI = buildExercisesUI;
-
-    // mark main script for download reference
-    document.currentScript.setAttribute('data-main', 'true');
-
-    // start
-    init();
-  </script>
-</body>
-</html>
