@@ -313,3 +313,93 @@
                      <td></td></tr>`;
           } else {
             body += `<tr><td><strong>${e.name}</strong></td>
+                     <td><input class="small-input" type="number" step="0.5" data-sid="${s.id}" data-eid="${e.id}" data-field="weightKg" value="${e.weightKg}"></td>
+                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="sets" value="${e.sets}"></td>
+                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="reps" value="${e.reps}"></td></tr>`;
+          }
+        });
+        body += '</tbody>';
+        table.innerHTML = head + body;
+        exWrap.appendChild(table);
+        card.appendChild(exWrap);
+        area.appendChild(card);
+      });
+
+      // wiring
+      qsa('.done-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const id = b.dataset.id;
+          const p = loadPlan(); const s = p.find(x=>x.id===id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
+        });
+      });
+      qsa('.trash').forEach(b => {
+        b.addEventListener('click', () => {
+          if(!confirm('Delete session?')) return;
+          const id = b.dataset.id; const p = loadPlan().filter(x=>x.id!==id); savePlan(p); renderPlan();
+        });
+      });
+      // inline edits
+      qsa('input[data-sid]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
+          const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
+          const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
+          if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
+          else ex[field] = parseInt(inp.value) || 0;
+          savePlan(p);
+        });
+        inp.addEventListener('blur', () => renderPlan());
+      });
+    }
+
+    // init & event wiring
+    function init(){
+      qs('#sessionDate').value = fmtDate(new Date());
+      buildExercisesUI(qs('#workoutType').value);
+
+      qs('#workoutType').addEventListener('change', (e) => buildExercisesUI(e.target.value));
+
+      qs('#addSessionBtn').addEventListener('click', () => {
+        const s = readSessionForm();
+        if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
+        const p = loadPlan(); p.push(s); savePlan(p); renderPlan();
+        // clear selections
+        qsa('#exercisesArea input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+        qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
+      });
+
+      qs('#clearAllBtn').addEventListener('click', () => {
+        if(!confirm('Clear all sessions?')) return;
+        savePlan([]); renderPlan();
+      });
+
+      qs('#exportBtn').addEventListener('click', () => {
+        const data = JSON.stringify(loadPlan(), null, 2);
+        qs('#exportBox').value = data;
+        try { navigator.clipboard && navigator.clipboard.writeText(data); } catch(e){}
+        alert('JSON placed in the box (and copied to clipboard if permitted).');
+      });
+
+      qs('#importBtn').addEventListener('click', () => {
+        const raw = qs('#exportBox').value.trim();
+        if(!raw){ alert('Paste JSON into the box to import.'); return; }
+        try {
+          const parsed = JSON.parse(raw);
+          if(!Array.isArray(parsed)) throw new Error('Expected an array of sessions');
+          savePlan(parsed); renderPlan(); alert('Import complete.');
+        } catch(err) {
+          alert('Import failed: ' + (err && err.message ? err.message : 'invalid JSON'));
+        }
+      });
+
+      renderPlan();
+    }
+
+    // expose small helpers for console (optional)
+    window.fmtDate = fmtDate;
+    window.buildExercisesUI = buildExercisesUI;
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
