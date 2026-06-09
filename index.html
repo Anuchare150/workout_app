@@ -36,21 +36,17 @@
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     
-    /* DEFINITIVE FIX: Replaced background: transparent with a solid color to force iOS Safari to render white text */
-    input[type="number"], input[type="date"], select, textarea, input[type="text"]{
+    /* BULLETPROOF FORM INPUT FIX FOR BLACK TEXT / INVISIBLE APP INPUTS ON IOS */
+    input[type="text"], input[type="date"], select, textarea {
       width:100%;
       padding:8px;
       border-radius:8px;
-      border:1px solid rgba(255,255,255,0.15);
-      background-color: #162235 !important;
+      border:1px solid #fff;
+      background-color: rgba(255, 255, 255, 0.1) !important;
       color: #ffffff !important;
+      font-size: 16px !important; /* Prevents iOS Safari from auto-zooming screen layout when typing */
       -webkit-appearance: none !important;
       appearance: none !important;
-    }
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
     
     .col-3{grid-column:span 3}
@@ -70,14 +66,16 @@
     .ex-name{min-width:150px;font-weight:700}
     .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
     
-    /* DEFINITIVE FIX: Applied solid background color to the small inner workout boxes too */
+    /* BULLETPROOF WORKOUT DETAIL INLINE INPUT BOX FIX FOR IOS */
     .small-input{
       width:72px;
       padding:6px;
       border-radius:6px;
-      border:1px solid rgba(255,255,255,0.15);
-      background-color: #162235 !important;
+      border:1px solid #fff;
+      background-color: rgba(255, 255, 255, 0.12) !important;
       color: #ffffff !important;
+      font-size: 15px !important;
+      text-align: center;
       -webkit-appearance: none !important;
       appearance: none !important;
     }
@@ -95,7 +93,7 @@
     .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
 
     .controls{display:flex;gap:8px;align-items:center}
-    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:#162235;color:#fff;resize:vertical}
+    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:rgba(255,255,255,0.05);color:#fff;resize:vertical}
 
     .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700;color:#fff}
     .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700}
@@ -137,7 +135,7 @@
           </div>
           <div class="col-3">
             <label class="small">Session calories (kcal)</label>
-            <input id="sessionCalories" type="number" min="0" value="0" />
+            <input id="sessionCalories" type="text" inputmode="numeric" value="0" />
           </div>
           <div class="col-3">
             <label class="small">Notes (optional)</label>
@@ -235,18 +233,18 @@
         controls.className = 'ex-controls';
 
         if(type === 'cardio'){
-          const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)';
-          dur.dataset.prop = 'duration';
+          const dur = document.createElement('input'); dur.type='text'; dur.inputmode='numeric'; value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)';
+          dur.dataset.prop = 'duration'; dur.value = ex.defaultDuration || 20;
           const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
-          const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories'; cal.title='Estimated calories';
+          const cal = document.createElement('input'); cal.type='text'; cal.inputmode='numeric'; cal.className='small-input'; cal.dataset.prop='calories'; cal.title='Estimated calories'; cal.value=0;
           controls.appendChild(dur);
           controls.appendChild(durLabel);
           controls.appendChild(cal);
         } else {
-          const w = document.createElement('input'); w.type='number'; w.step='0.5'; w.className='small-input'; w.value = ex.defaultWeight || 0; w.dataset.prop='weight'; w.title='Weight (kg)';
+          const w = document.createElement('input'); w.type='text'; w.inputmode='decimal'; w.className='small-input'; w.dataset.prop='weight'; w.title='Weight (kg)'; w.value = ex.defaultWeight || 0;
           const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
-          const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
-          const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
+          const sets = document.createElement('input'); sets.type='text'; sets.inputmode='numeric'; sets.className='small-input'; sets.dataset.prop='sets'; sets.value = ex.sets || 3;
+          const reps = document.createElement('input'); reps.type='text'; reps.inputmode='numeric'; reps.className='small-input'; reps.dataset.prop='reps'; reps.value = ex.reps || 10;
           controls.appendChild(w); controls.appendChild(kg);
           controls.appendChild(sets); controls.appendChild(reps);
         }
@@ -351,8 +349,8 @@
             session.exercises.forEach(ex=>{
               const tr = document.createElement('tr');
               tr.innerHTML = `<td><strong>${ex.name}</strong></td>
-                              <td><input type="number" min="1" value="${ex.durationMin}" data-session="${session.id}" data-ex="${ex.id}" data-prop="duration" class="small-input" /></td>
-                              <td><input type="number" min="0" value="${ex.calories || 0}" data-session="${session.id}" data-ex="${ex.id}" data-prop="cal" class="small-input" /></td>
+                              <td><input type="text" inputmode="numeric" value="${ex.durationMin}" data-session="${session.id}" data-ex="${ex.id}" data-prop="duration" class="small-input" /></td>
+                              <td><input type="text" inputmode="numeric" value="${ex.calories || 0}" data-session="${session.id}" data-ex="${ex.id}" data-prop="cal" class="small-input" /></td>
                               <td></td>`;
               tbody.appendChild(tr);
             });
@@ -363,9 +361,9 @@
             session.exercises.forEach(ex=>{
               const tr = document.createElement('tr');
               tr.innerHTML = `<td><strong>${ex.name}</strong></td>
-                              <td><input type="number" step="0.5" min="0" value="${ex.weightKg}" data-session="${session.id}" data-ex="${ex.id}" data-prop="weight" class="small-input" /></td>
-                              <td><input type="number" min="1" value="${ex.sets}" data-session="${session.id}" data-ex="${ex.id}" data-prop="sets" class="small-input" /></td>
-                              <td><input type="number" min="1" value="${ex.reps}" data-session="${session.id}" data-ex="${ex.id}" data-prop="reps" class="small-input" /></td>`;
+                              <td><input type="text" inputmode="decimal" value="${ex.weightKg}" data-session="${session.id}" data-ex="${ex.id}" data-prop="weight" class="small-input" /></td>
+                              <td><input type="text" inputmode="numeric" value="${ex.sets}" data-session="${session.id}" data-ex="${ex.id}" data-prop="sets" class="small-input" /></td>
+                              <td><input type="text" inputmode="numeric" value="${ex.reps}" data-session="${session.id}" data-ex="${ex.id}" data-prop="reps" class="small-input" /></td>`;
               tbody.appendChild(tr);
             });
             table.appendChild(thead); table.appendChild(tbody);
@@ -430,7 +428,7 @@
 
     function toggleDone(id){
       const plan = loadPlan();
-      const s = plan.find(x=>x.id===id);
+      const s = plan.find(x=>id===x.id);
       if(!s) return;
       s.done = !s.done;
       savePlan(plan);
