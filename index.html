@@ -2,37 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Workout Planner — Checkbox Fix</title>
+  <title>Workout Planner — Upper / Leg / Cardio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <style>
     :root{
       --bg1:#071126; --bg2:#0d2444;
-      --panel: rgba(255,255,255,0.03);
-      --muted: rgba(255,255,255,0.75);
+      --card:#0b2036;
+      --muted:rgba(255,255,255,0.78);
       --accent1:#6d28d9; --accent2:#06b6d4;
+      --accent-strong:#4f46e5;
       --input-bg:#0f2238;
-      --card-radius:12px;
+      --radius:12px;
+      --max-w:980px;
+      --success:#10b981;
+      --danger:#ef4444;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{height:100%;margin:0}
     body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
       color:#fff;padding:18px;-webkit-font-smoothing:antialiased;
     }
-    .app{max-width:1060px;margin:0 auto;background:rgba(255,255,255,0.01);padding:16px;border-radius:var(--card-radius);border:1px solid rgba(255,255,255,0.03)}
+
+    .wrap{max-width:var(--max-w);margin:0 auto}
+    .app{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.003));padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
     header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
     .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
     h1{margin:0;font-size:18px}
     p.lead{margin:0;color:var(--muted);font-size:13px}
 
-    .panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
+    .panel{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 
+    /* Inputs: mobile-friendly */
     input, select, textarea {
-      width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:var(--input-bg);color:#fff;font-size:16px;
-      -webkit-text-fill-color:#fff; -webkit-appearance:none; appearance:none;
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:var(--input-bg);
+      color:#fff;
+      font-size:16px; /* prevents iOS zoom on focus */
+      -webkit-text-fill-color:#fff;
+      -webkit-appearance:none;
+      appearance:none;
     }
     ::placeholder{color:rgba(255,255,255,0.45)}
 
@@ -41,25 +56,23 @@
     .col-6{grid-column:span 6}
     .col-12{grid-column:span 12}
     .actions{display:flex;gap:8px;align-items:center}
-    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:10px 12px;border-radius:8px;font-weight:700;cursor:pointer}
-    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
 
-    /* Exercises list: use native checkbox and large tap area */
+    /* Exercises list */
     .ex-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
     .ex-item{
       display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
-      background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.003));
-      transition:background .12s,box-shadow .12s;
+      background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));
     }
-    .ex-item.selected{background:linear-gradient(180deg, rgba(109,40,217,0.10), rgba(6,182,212,0.03));box-shadow:0 8px 20px rgba(2,6,23,0.12)}
-    .ex-left{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .ex-item.selected{
+      background:linear-gradient(180deg, rgba(79,70,229,0.08), rgba(6,182,212,0.02));
+      box-shadow:0 8px 20px rgba(2,6,23,0.08);
+    }
+    .ex-left{display:flex;align-items:center;gap:12px;flex:0 0 auto; cursor:pointer; user-select:none;}
     .ex-name{font-weight:700}
-    /* keep native checkbox visible and large */
-    .ex-checkbox{
-      width:22px;height:22px;flex:0 0 22px;cursor:pointer;
-      accent-color: #6d28d9; /* modern browsers */
-    }
-    .ex-controls{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .ex-checkbox{width:22px;height:22px;flex:0 0 22px;cursor:pointer; accent-color:var(--accent-strong)}
+    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
     .small-input{min-width:72px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--input-bg);color:#fff;text-align:center;font-size:15px}
 
     .plan{display:flex;flex-direction:column;gap:10px;margin-top:10px}
@@ -70,8 +83,8 @@
     table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
     th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.05)}
     th{color:var(--muted);font-weight:700;font-size:13px}
-    .done-btn{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
-    .trash{background:transparent;border:0;color:#ff7b7b;cursor:pointer}
+    .done-btn{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,var(--success),#059669);color:#fff;border:0;cursor:pointer}
+    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700;padding:6px}
 
     .exportbox{width:100%;height:90px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#fff;resize:vertical}
     .muted{color:var(--muted);font-size:13px}
@@ -84,322 +97,381 @@
   </style>
 </head>
 <body>
-  <div class="app" role="application" aria-label="Workout Planner">
-    <header>
-      <div class="logo">WP</div>
-      <div>
-        <h1>Workout Planner</h1>
-        <p class="lead">Leg / Upper / Cardio — select exercises, set kg / sets / reps or duration.</p>
+  <div class="wrap">
+    <div class="app" role="application" aria-label="Workout Planner">
+      <header>
+        <div class="logo">WP</div>
+        <div>
+          <h1>Workout Planner</h1>
+          <p class="lead">Leg, Upper Body, Cardio — set kg, sets, reps, and durations. Tap items to select.</p>
+        </div>
+      </header>
+
+      <div class="panel" aria-label="Session builder">
+        <form id="sessionForm" onsubmit="return false;">
+          <div class="grid">
+            <div class="col-3">
+              <label class="small">Date</label>
+              <input id="sessionDate" type="date" />
+            </div>
+            <div class="col-3">
+              <label class="small">Workout type</label>
+              <select id="workoutType" aria-label="Workout type">
+                <option value="leg">Leg Workout</option>
+                <option value="upper">Upper Body</option>
+                <option value="cardio">Cardio</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <label class="small">Session calories (kcal)</label>
+              <input id="sessionCalories" type="number" min="0" value="0" />
+            </div>
+            <div class="col-3">
+              <label class="small">Notes</label>
+              <input id="sessionNotes" type="text" placeholder="optional" />
+            </div>
+
+            <div class="col-12">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="font-weight:800">Exercises</div>
+                <div class="muted">Tap the left area or checkbox to select. Selected items are highlighted.</div>
+              </div>
+              <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
+            </div>
+
+            <div class="col-12" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+              <div class="actions">
+                <button id="addSessionBtn" type="button">Add Session</button>
+                <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
+              </div>
+              <div style="margin-left:auto" class="muted">Saved locally on this device (no network).</div>
+            </div>
+          </div>
+        </form>
       </div>
-    </header>
 
-    <div class="panel" aria-label="Session builder">
-      <form id="sessionForm" onsubmit="return false;">
-        <div class="grid">
-          <div class="col-3">
-            <label class="small">Date</label>
-            <input id="sessionDate" type="date" />
-          </div>
-          <div class="col-3">
-            <label class="small">Workout type</label>
-            <select id="workoutType">
-              <option value="leg">Leg Workout</option>
-              <option value="upper">Upper Body</option>
-              <option value="cardio">Cardio</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label class="small">Session calories (kcal)</label>
-            <input id="sessionCalories" type="number" min="0" value="0" />
-          </div>
-          <div class="col-3">
-            <label class="small">Notes</label>
-            <input id="sessionNotes" type="text" placeholder="optional" />
-          </div>
+      <div id="planArea" class="plan" aria-live="polite"></div>
 
-          <div class="col-12">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <div style="font-weight:800">Exercises</div>
-              <div class="muted">Tap the left area or checkbox to select. Selected items are highlighted.</div>
-            </div>
-            <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
+      <div class="panel" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div>
+            <strong>Backup / Restore</strong>
+            <div class="muted">Copy JSON to back up or paste to restore.</div>
           </div>
-
-          <div class="col-12" style="display:flex;align-items:center;gap:8px;margin-top:8px">
-            <div class="actions">
-              <button id="addSessionBtn" type="button">Add Session</button>
-              <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
-            </div>
-            <div style="margin-left:auto" class="muted">Saved locally on this device (no cloud).</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
+            <button id="importBtn" class="ghost" type="button">Load JSON</button>
           </div>
         </div>
-      </form>
-    </div>
-
-    <div id="planArea" class="plan"></div>
-
-    <div class="panel" style="margin-top:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div><strong>Backup / Restore</strong><div class="muted">Copy JSON out or paste to restore.</div></div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
-          <button id="importBtn" class="ghost" type="button">Load JSON</button>
-        </div>
+        <textarea id="exportBox" class="exportbox" placeholder="Data JSON will appear here"></textarea>
       </div>
-      <textarea id="exportBox" class="exportbox" placeholder="Data JSON will appear here"></textarea>
     </div>
   </div>
 
   <script>
-    // Ensure checkboxes are tappable: native inputs + click-on-item toggling (ignoring control clicks).
-    const STORAGE_KEY = 'workout_planner_checkbox_fixed_v1';
+    (function(){
+      const STORAGE_KEY = 'workout_planner_v_final';
 
-    const CATALOG = {
-      leg: [
-        { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
-        { id:'legcurl', name:'Leg Curl', defaultWeight:26, sets:3, reps:10 },
-        { id:'squats', name:'Weighted Squats', defaultWeight:4, sets:3, reps:10 },
-        { id:'lunges', name:'Lunges', defaultWeight:2, sets:3, reps:10 }
-      ],
-      upper: [
-        { id:'pull', name:'Lat Pull-down / Row', defaultWeight:20, sets:3, reps:8 },
-        { id:'bench', name:'Bench Press', defaultWeight:20, sets:3, reps:8 },
-        { id:'ohp', name:'Overhead Press', defaultWeight:10, sets:3, reps:8 },
-        { id:'dbrow', name:'Dumbbell Row', defaultWeight:12, sets:3, reps:8 },
-        { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
-      ],
-      cardio: [
-        { id:'treadmill', name:'Treadmill', defaultDuration:20 }
-      ]
-    };
-
-    const qs = s => document.querySelector(s);
-    const qsa = s => Array.from(document.querySelectorAll(s));
-
-    function fmtDate(d){ return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`; }
-    function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
-    function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
-
-    function loadPlan(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
-    function savePlan(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
-
-    // Build exercise list with native checkboxes and controls
-    function buildExercisesUI(type){
-      const area = qs('#exercisesArea'); area.innerHTML = '';
-      (CATALOG[type] || []).forEach(ex => {
-        const item = document.createElement('div');
-        item.className = 'ex-item';
-        // left clickable area (checkbox + name)
-        const left = document.createElement('div');
-        left.className = 'ex-left';
-        // checkbox input (native and visible)
-        const ck = document.createElement('input');
-        ck.type = 'checkbox';
-        ck.className = 'ex-checkbox';
-        ck.id = 'ck_' + ex.id;
-        ck.dataset.ex = ex.id;
-        // name element
-        const name = document.createElement('div');
-        name.className = 'ex-name';
-        name.textContent = ex.name;
-
-        left.appendChild(ck);
-        left.appendChild(name);
-        item.appendChild(left);
-
-        // controls on the right
-        const controls = document.createElement('div');
-        controls.className = 'ex-controls';
-        if(type === 'cardio'){
-          const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.dataset.prop='duration';
-          const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
-          const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories';
-          controls.appendChild(dur); controls.appendChild(durLabel); controls.appendChild(cal);
-        } else {
-          const weight = document.createElement('input'); weight.type='number'; weight.step='0.5'; weight.className='small-input'; weight.value = ex.defaultWeight || 0; weight.dataset.prop='weight';
-          const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
-          const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
-          const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
-          controls.appendChild(weight); controls.appendChild(kg); controls.appendChild(sets); controls.appendChild(reps);
-        }
-        item.appendChild(controls);
-
-        // checkbox change toggles visual
-        ck.addEventListener('change', () => {
-          if(ck.checked) item.classList.add('selected'); else item.classList.remove('selected');
-        });
-
-        // Make tapping the left area toggle the checkbox (but not when user taps a control)
-        left.addEventListener('click', (ev) => {
-          // if user clicked directly on a control inside left (rare), ignore; otherwise toggle
-          if(ev.target.tagName === 'INPUT' || ev.target.tagName === 'BUTTON' || ev.target.tagName === 'SELECT') return;
-          ck.checked = !ck.checked;
-          ck.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-
-        // keyboard accessibility on name
-        name.tabIndex = 0;
-        name.addEventListener('keydown', (ev) => {
-          if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ck.checked = !ck.checked; ck.dispatchEvent(new Event('change', { bubbles: true })); }
-        });
-
-        area.appendChild(item);
-      });
-    }
-
-    // Read session data
-    function readSessionForm(){
-      const date = qs('#sessionDate').value || fmtDate(new Date());
-      const type = qs('#workoutType').value;
-      const exercises = [];
-      qsa('#exercisesArea .ex-item').forEach(item => {
-        const ck = item.querySelector('input[type="checkbox"]');
-        if(!ck || !ck.checked) return;
-        const exId = ck.dataset.ex;
-        const catalog = (CATALOG[type] || []).find(e => e.id === exId);
-        if(!catalog) return;
-        if(type === 'cardio'){
-          const duration = parseInt(item.querySelector('[data-prop="duration"]').value) || catalog.defaultDuration || 20;
-          const calories = parseInt(item.querySelector('[data-prop="calories"]').value) || 0;
-          exercises.push({ id:exId, name:catalog.name, durationMin:duration, calories });
-        } else {
-          const weightKg = parseFloat(item.querySelector('[data-prop="weight"]').value) || catalog.defaultWeight || 0;
-          const sets = parseInt(item.querySelector('[data-prop="sets"]').value) || catalog.sets || 3;
-          const reps = parseInt(item.querySelector('[data-prop="reps"]').value) || catalog.reps || 10;
-          exercises.push({ id:exId, name:catalog.name, weightKg, sets, reps });
-        }
-      });
-      return {
-        id: 's' + Date.now(),
-        date,
-        weekday: weekdayName(parseDate(date)),
-        type,
-        calories: parseInt(qs('#sessionCalories').value) || 0,
-        notes: qs('#sessionNotes').value || '',
-        exercises,
-        done: false
+      const CATALOG = {
+        leg: [
+          { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
+          { id:'legcurl', name:'Leg Curl', defaultWeight:26, sets:3, reps:10 },
+          { id:'squats', name:'Weighted Squats', defaultWeight:4, sets:3, reps:10 },
+          { id:'lunges', name:'Lunges', defaultWeight:2, sets:3, reps:10 }
+        ],
+        upper: [
+          { id:'pull', name:'Lat Pull-down / Row', defaultWeight:20, sets:3, reps:8 },
+          { id:'bench', name:'Bench Press', defaultWeight:20, sets:3, reps:8 },
+          { id:'ohp', name:'Overhead Press', defaultWeight:10, sets:3, reps:8 },
+          { id:'dbrow', name:'Dumbbell Row', defaultWeight:12, sets:3, reps:8 },
+          { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
+        ],
+        cardio: [
+          { id:'treadmill', name:'Treadmill', defaultDuration:20 }
+        ]
       };
-    }
 
-    // Render saved sessions
-    function renderPlan(){
-      const plan = loadPlan();
-      const area = qs('#planArea'); area.innerHTML = '';
-      if(!plan.length){
-        area.innerHTML = '<div class="panel muted">No sessions saved yet.</div>'; return;
+      const qs = s => document.querySelector(s);
+      const qsa = s => Array.from(document.querySelectorAll(s));
+
+      function fmtDate(d){
+        return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`;
       }
-      plan.forEach(s => {
-        const card = document.createElement('div'); card.className = 'session';
-        const meta = document.createElement('div'); meta.className = 'meta';
-        meta.innerHTML = `<div class="date">${s.date}</div>
-                          <div class="weekday">${s.weekday} · ${s.type.toUpperCase()}</div>
-                          <div style="margin-top:6px" class="muted">Kcal: ${s.calories}</div>
-                          <div class="muted" style="font-size:12px;margin-top:4px">${s.notes ? 'Note: '+s.notes : ''}</div>
-                          <div style="margin-top:10px"><button class="done-btn" data-id="${s.id}">${s.done ? 'Done' : 'Mark Done'}</button></div>
-                          <div style="margin-top:8px"><button class="trash" data-id="${s.id}">Delete</button></div>`;
-        card.appendChild(meta);
+      function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
+      function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
-        const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
-        const table = document.createElement('table');
-        let head = '<thead>';
-        if(s.type === 'cardio') head += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
-        else head += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
-        let body = '<tbody>';
-        s.exercises.forEach(e => {
-          if(s.type === 'cardio'){
-            body += `<tr><td><strong>${e.name}</strong></td>
-                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="durationMin" value="${e.durationMin}"></td>
-                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="calories" value="${e.calories||0}"></td>
-                     <td></td></tr>`;
+      function loadPlan(){
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; }
+      }
+      function savePlan(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+      function buildExercisesUI(type){
+        const area = qs('#exercisesArea');
+        area.innerHTML = '';
+        const list = CATALOG[type] || [];
+        list.forEach(ex => {
+          const item = document.createElement('div');
+          item.className = 'ex-item';
+
+          const left = document.createElement('div');
+          left.className = 'ex-left';
+          left.setAttribute('role','button');
+          left.tabIndex = 0;
+
+          const ck = document.createElement('input');
+          ck.type = 'checkbox';
+          ck.className = 'ex-checkbox';
+          ck.id = 'ck_' + ex.id;
+          ck.dataset.ex = ex.id;
+
+          const name = document.createElement('div');
+          name.className = 'ex-name';
+          name.textContent = ex.name;
+
+          left.appendChild(ck);
+          left.appendChild(name);
+
+          const controls = document.createElement('div');
+          controls.className = 'ex-controls';
+
+          if(type === 'cardio'){
+            const dur = document.createElement('input');
+            dur.type = 'number';
+            dur.min = 1;
+            dur.value = ex.defaultDuration || 20;
+            dur.className = 'small-input';
+            dur.dataset.prop = 'duration';
+            const durLabel = document.createElement('div');
+            durLabel.className = 'muted';
+            durLabel.style.fontSize = '12px';
+            durLabel.textContent = 'min';
+            const cal = document.createElement('input');
+            cal.type = 'number';
+            cal.min = 0;
+            cal.value = 0;
+            cal.className = 'small-input';
+            cal.dataset.prop = 'calories';
+            controls.appendChild(dur);
+            controls.appendChild(durLabel);
+            controls.appendChild(cal);
           } else {
-            body += `<tr><td><strong>${e.name}</strong></td>
-                     <td><input class="small-input" type="number" step="0.5" data-sid="${s.id}" data-eid="${e.id}" data-field="weightKg" value="${e.weightKg}"></td>
-                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="sets" value="${e.sets}"></td>
-                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="reps" value="${e.reps}"></td></tr>`;
+            const weight = document.createElement('input');
+            weight.type = 'number';
+            weight.step = '0.5';
+            weight.className = 'small-input';
+            weight.value = ex.defaultWeight || 0;
+            weight.dataset.prop = 'weight';
+            const kg = document.createElement('div');
+            kg.className = 'muted';
+            kg.style.fontSize = '12px';
+            kg.textContent = 'kg';
+            const sets = document.createElement('input');
+            sets.type = 'number';
+            sets.min = 1;
+            sets.className = 'small-input';
+            sets.value = ex.sets || 3;
+            sets.dataset.prop = 'sets';
+            const reps = document.createElement('input');
+            reps.type = 'number';
+            reps.min = 1;
+            reps.className = 'small-input';
+            reps.value = ex.reps || 10;
+            reps.dataset.prop = 'reps';
+            controls.appendChild(weight);
+            controls.appendChild(kg);
+            controls.appendChild(sets);
+            controls.appendChild(reps);
+          }
+
+          item.appendChild(left);
+          item.appendChild(controls);
+          area.appendChild(item);
+
+          // toggle visual selection when checkbox changes
+          ck.addEventListener('change', () => {
+            if(ck.checked) item.classList.add('selected'); else item.classList.remove('selected');
+          });
+
+          // clicking left area toggles checkbox (but not when clicking an input)
+          left.addEventListener('click', (ev) => {
+            if(ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
+            ck.checked = !ck.checked;
+            ck.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+
+          // keyboard accessible toggle
+          left.addEventListener('keydown', (ev) => {
+            if(ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault();
+              ck.checked = !ck.checked;
+              ck.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+        });
+      }
+
+      function readSessionForm(){
+        const date = qs('#sessionDate').value || fmtDate(new Date());
+        const type = qs('#workoutType').value;
+        const exercises = [];
+        qsa('#exercisesArea .ex-item').forEach(item => {
+          const ck = item.querySelector('input[type="checkbox"]');
+          if(!ck || !ck.checked) return;
+          const exId = ck.dataset.ex;
+          const cat = (CATALOG[type] || []).find(e => e.id === exId);
+          if(!cat) return;
+          if(type === 'cardio'){
+            const duration = parseInt(item.querySelector('[data-prop="duration"]').value) || cat.defaultDuration || 20;
+            const calories = parseInt(item.querySelector('[data-prop="calories"]').value) || 0;
+            exercises.push({ id: exId, name: cat.name, durationMin: duration, calories });
+          } else {
+            const weightKg = parseFloat(item.querySelector('[data-prop="weight"]').value) || cat.defaultWeight || 0;
+            const sets = parseInt(item.querySelector('[data-prop="sets"]').value) || cat.sets || 3;
+            const reps = parseInt(item.querySelector('[data-prop="reps"]').value) || cat.reps || 10;
+            exercises.push({ id: exId, name: cat.name, weightKg, sets, reps });
           }
         });
-        body += '</tbody>';
-        table.innerHTML = head + body;
-        exWrap.appendChild(table);
-        card.appendChild(exWrap);
-        area.appendChild(card);
-      });
+        return {
+          id: 's' + Date.now(),
+          date,
+          weekday: weekdayName(parseDate(date)),
+          type,
+          calories: parseInt(qs('#sessionCalories').value) || 0,
+          notes: qs('#sessionNotes').value || '',
+          exercises,
+          done: false
+        };
+      }
 
-      // wiring
-      qsa('.done-btn').forEach(b => {
-        b.addEventListener('click', () => {
-          const id = b.dataset.id;
-          const p = loadPlan(); const s = p.find(x=>x.id===id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
-        });
-      });
-      qsa('.trash').forEach(b => {
-        b.addEventListener('click', () => {
-          if(!confirm('Delete session?')) return;
-          const id = b.dataset.id; const p = loadPlan().filter(x=>x.id!==id); savePlan(p); renderPlan();
-        });
-      });
-      // inline edits
-      qsa('input[data-sid]').forEach(inp => {
-        inp.addEventListener('input', () => {
-          const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
-          const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
-          const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
-          if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
-          else ex[field] = parseInt(inp.value) || 0;
-          savePlan(p);
-        });
-        inp.addEventListener('blur', () => renderPlan());
-      });
-    }
-
-    // init & event wiring
-    function init(){
-      qs('#sessionDate').value = fmtDate(new Date());
-      buildExercisesUI(qs('#workoutType').value);
-
-      qs('#workoutType').addEventListener('change', (e) => buildExercisesUI(e.target.value));
-
-      qs('#addSessionBtn').addEventListener('click', () => {
-        const s = readSessionForm();
-        if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
-        const p = loadPlan(); p.push(s); savePlan(p); renderPlan();
-        // clear selections
-        qsa('#exercisesArea input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
-        qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
-      });
-
-      qs('#clearAllBtn').addEventListener('click', () => {
-        if(!confirm('Clear all sessions?')) return;
-        savePlan([]); renderPlan();
-      });
-
-      qs('#exportBtn').addEventListener('click', () => {
-        const data = JSON.stringify(loadPlan(), null, 2);
-        qs('#exportBox').value = data;
-        try { navigator.clipboard && navigator.clipboard.writeText(data); } catch(e){}
-        alert('JSON placed in the box (and copied to clipboard if permitted).');
-      });
-
-      qs('#importBtn').addEventListener('click', () => {
-        const raw = qs('#exportBox').value.trim();
-        if(!raw){ alert('Paste JSON into the box to import.'); return; }
-        try {
-          const parsed = JSON.parse(raw);
-          if(!Array.isArray(parsed)) throw new Error('Expected an array of sessions');
-          savePlan(parsed); renderPlan(); alert('Import complete.');
-        } catch(err) {
-          alert('Import failed: ' + (err && err.message ? err.message : 'invalid JSON'));
+      function renderPlan(){
+        const plan = loadPlan();
+        const area = qs('#planArea');
+        area.innerHTML = '';
+        if(!plan.length){
+          area.innerHTML = '<div class="panel muted">No sessions yet. Build a session above and click "Add Session".</div>';
+          return;
         }
-      });
+        plan.forEach(session => {
+          const card = document.createElement('div'); card.className = 'session';
+          const meta = document.createElement('div'); meta.className = 'meta';
+          meta.innerHTML = `<div class="date">${session.date}</div>
+                            <div class="weekday">${session.weekday} · ${session.type.toUpperCase()}</div>
+                            <div style="margin-top:6px" class="muted">Kcal: ${session.calories}</div>
+                            <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: ' + session.notes : ''}</div>
+                            <div style="margin-top:10px"><button class="done-btn" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
+                            <div style="margin-top:8px"><button class="trash" data-id="${session.id}">Delete</button></div>`;
+          card.appendChild(meta);
 
-      renderPlan();
-    }
+          const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
+          const table = document.createElement('table');
+          let thead = '<thead>';
+          if(session.type === 'cardio') thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
+          else thead += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
+          let tbody = '<tbody>';
+          session.exercises.forEach(ex => {
+            if(session.type === 'cardio'){
+              tbody += `<tr>
+                <td><strong>${ex.name}</strong></td>
+                <td><input class="small-input" type="number" data-sid="${session.id}" data-eid="${ex.id}" data-field="durationMin" value="${ex.durationMin}"></td>
+                <td><input class="small-input" type="number" data-sid="${session.id}" data-eid="${ex.id}" data-field="calories" value="${ex.calories||0}"></td>
+                <td></td>
+              </tr>`;
+            } else {
+              tbody += `<tr>
+                <td><strong>${ex.name}</strong></td>
+                <td><input class="small-input" type="number" step="0.5" data-sid="${session.id}" data-eid="${ex.id}" data-field="weightKg" value="${ex.weightKg}"></td>
+                <td><input class="small-input" type="number" data-sid="${session.id}" data-eid="${ex.id}" data-field="sets" value="${ex.sets}"></td>
+                <td><input class="small-input" type="number" data-sid="${session.id}" data-eid="${ex.id}" data-field="reps" value="${ex.reps}"></td>
+              </tr>`;
+            }
+          });
+          tbody += '</tbody>';
+          table.innerHTML = thead + tbody;
+          exWrap.appendChild(table);
+          card.appendChild(exWrap);
+          area.appendChild(card);
+        });
 
-    // expose small helpers for console (optional)
-    window.fmtDate = fmtDate;
-    window.buildExercisesUI = buildExercisesUI;
+        // wire plan controls
+        qsa('.done-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const p = loadPlan(); const s = p.find(x => x.id === id);
+            if(!s) return;
+            s.done = !s.done; savePlan(p); renderPlan();
+          });
+        });
+        qsa('.trash').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if(!confirm('Delete session?')) return;
+            const id = btn.dataset.id;
+            const p = loadPlan().filter(x => x.id !== id);
+            savePlan(p); renderPlan();
+          });
+        });
+        qsa('input[data-sid]').forEach(inp => {
+          // update on input for immediate save
+          inp.addEventListener('input', () => {
+            const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
+            const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
+            const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
+            if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
+            else ex[field] = parseInt(inp.value) || 0;
+            savePlan(p);
+          });
+          // re-render on blur to normalize formatting
+          inp.addEventListener('blur', () => renderPlan());
+        });
+      }
 
-    document.addEventListener('DOMContentLoaded', init);
+      // init wiring
+      function init(){
+        qs('#sessionDate').value = fmtDate(new Date());
+        buildExercisesUI(qs('#workoutType').value);
+        qs('#workoutType').addEventListener('change', e => buildExercisesUI(e.target.value));
+
+        qs('#addSessionBtn').addEventListener('click', () => {
+          const s = readSessionForm();
+          if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
+          const p = loadPlan(); p.push(s); savePlan(p); renderPlan();
+          // clear selections
+          qsa('#exercisesArea input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+          qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
+        });
+
+        qs('#clearAllBtn').addEventListener('click', () => {
+          if(!confirm('Clear all sessions?')) return;
+          savePlan([]); renderPlan();
+        });
+
+        qs('#exportBtn').addEventListener('click', () => {
+          const data = JSON.stringify(loadPlan(), null, 2);
+          qs('#exportBox').value = data;
+          try { navigator.clipboard && navigator.clipboard.writeText(data); } catch(e){}
+          alert('JSON placed in the box and copied to clipboard if allowed.');
+        });
+
+        qs('#importBtn').addEventListener('click', () => {
+          const raw = qs('#exportBox').value.trim();
+          if(!raw){ alert('Paste JSON into the box to import.'); return; }
+          try {
+            const parsed = JSON.parse(raw);
+            if(!Array.isArray(parsed)) throw new Error('Expected an array of sessions');
+            savePlan(parsed); renderPlan(); alert('Import complete.');
+          } catch(err) {
+            alert('Import failed: ' + (err && err.message ? err.message : 'invalid JSON'));
+          }
+        });
+
+        renderPlan();
+      }
+
+      // Expose helpers (optional)
+      window.buildExercisesUI = buildExercisesUI;
+      window.fmtDate = fmtDate;
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
   </script>
 </body>
 </html>
