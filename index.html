@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <title>Workout Planner — Upper / Leg / Cardio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <style>
     :root{
       --bg1:#071126; --bg2:#0d2444;
@@ -64,26 +67,39 @@
     .ex-item{
       display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
       background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));
+      -webkit-tap-highlight-color: transparent;
     }
     .ex-item.selected{
       background:linear-gradient(180deg, rgba(79,70,229,0.08), rgba(6,182,212,0.02));
       box-shadow:0 8px 20px rgba(2,6,23,0.08);
+      border-color: rgba(6,182,212,0.2);
     }
-    .ex-left{display:flex;align-items:center;gap:12px;flex:0 0 auto; cursor:pointer; user-select:none;}
+    .ex-left{display:flex;align-items:center;gap:12px;flex:1 1 auto; cursor:pointer; user-select:none;}
     .ex-name{font-weight:700}
-    .ex-checkbox{width:22px;height:22px;flex:0 0 22px;cursor:pointer; accent-color:var(--accent-strong)}
-    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
-    .small-input{min-width:72px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--input-bg);color:#fff;text-align:center;font-size:15px}
+    
+    /* Cross-platform reliable checkbox display styling */
+    .ex-checkbox{
+      width:24px;
+      height:24px;
+      flex:0 0 24px;
+      cursor:pointer; 
+      accent-color:var(--accent-strong);
+      -webkit-appearance: checkbox !important;
+      appearance: checkbox !important;
+    }
+    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex:0 0 auto;flex-wrap:nowrap}
+    .small-input{width:68px;min-width:68px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--input-bg);color:#fff;text-align:center;font-size:15px}
 
     .plan{display:flex;flex-direction:column;gap:10px;margin-top:10px}
     .session{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.003), rgba(255,255,255,0.001))}
-    .meta{width:180px}
+    .meta{width:180px;flex-shrink:0}
     .date{font-weight:800}
     .weekday{color:var(--muted);font-size:13px;margin-top:4px}
     table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
     th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.05)}
     th{color:var(--muted);font-weight:700;font-size:13px}
-    .done-btn{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,var(--success),#059669);color:#fff;border:0;cursor:pointer}
+    .done-btn{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,var(--success),#059669);color:#fff;border:0;cursor:pointer;font-weight:700}
+    .done-btn.true{background:rgba(255,255,255,0.1);color:var(--muted)}
     .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700;padding:6px}
 
     .exportbox{width:100%;height:90px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#fff;resize:vertical}
@@ -91,8 +107,10 @@
 
     @media(max-width:880px){
       .col-3{grid-column:span 6}
-      .meta{width:140px}
-      .small-input{min-width:60px}
+      .grid{gap:8px}
+      .session{flex-direction:column;gap:16px}
+      .meta{width:100%}
+      .small-input{width:60px;min-width:60px}
     }
   </style>
 </head>
@@ -134,7 +152,7 @@
             <div class="col-12">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                 <div style="font-weight:800">Exercises</div>
-                <div class="muted">Tap the left area or checkbox to select. Selected items are highlighted.</div>
+                <div class="muted">Tap the item or checkbox to toggle selection.</div>
               </div>
               <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
             </div>
@@ -170,7 +188,7 @@
 
   <script>
     (function(){
-      const STORAGE_KEY = 'workout_planner_v_final';
+      const STORAGE_KEY = 'workout_planner_v_final_pwa';
 
       const CATALOG = {
         leg: [
@@ -209,14 +227,13 @@
         const area = qs('#exercisesArea');
         area.innerHTML = '';
         const list = CATALOG[type] || [];
+        
         list.forEach(ex => {
           const item = document.createElement('div');
           item.className = 'ex-item';
 
           const left = document.createElement('div');
           left.className = 'ex-left';
-          left.setAttribute('role','button');
-          left.tabIndex = 0;
 
           const ck = document.createElement('input');
           ck.type = 'checkbox';
@@ -287,25 +304,23 @@
           item.appendChild(controls);
           area.appendChild(item);
 
-          // toggle visual selection when checkbox changes
-          ck.addEventListener('change', () => {
-            if(ck.checked) item.classList.add('selected'); else item.classList.remove('selected');
-          });
-
-          // clicking left area toggles checkbox (but not when clicking an input)
-          left.addEventListener('click', (ev) => {
-            if(ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
-            ck.checked = !ck.checked;
-            ck.dispatchEvent(new Event('change', { bubbles: true }));
-          });
-
-          // keyboard accessible toggle
-          left.addEventListener('keydown', (ev) => {
-            if(ev.key === 'Enter' || ev.key === ' ') {
-              ev.preventDefault();
-              ck.checked = !ck.checked;
-              ck.dispatchEvent(new Event('change', { bubbles: true }));
+          // Update container styles when checked state changes
+          function updateHighlight() {
+            if(ck.checked) {
+              item.classList.add('selected');
+            } else {
+              item.classList.remove('selected');
             }
+          }
+
+          ck.addEventListener('change', updateHighlight);
+
+          // Toggling parent row fires checkbox correctly without native collision
+          left.addEventListener('click', (ev) => {
+            if(ev.target === ck) return; // let natural checkbox action run if target is input itself
+            ev.preventDefault();
+            ck.checked = !ck.checked;
+            updateHighlight();
           });
         });
       }
@@ -358,11 +373,11 @@
                             <div class="weekday">${session.weekday} · ${session.type.toUpperCase()}</div>
                             <div style="margin-top:6px" class="muted">Kcal: ${session.calories}</div>
                             <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: ' + session.notes : ''}</div>
-                            <div style="margin-top:10px"><button class="done-btn" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
+                            <div style="margin-top:10px"><button class="done-btn ${session.done}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
                             <div style="margin-top:8px"><button class="trash" data-id="${session.id}">Delete</button></div>`;
           card.appendChild(meta);
 
-          const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
+          const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1'; exWrap.style.width = '100%';
           const table = document.createElement('table');
           let thead = '<thead>';
           if(session.type === 'cardio') thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
@@ -410,7 +425,6 @@
           });
         });
         qsa('input[data-sid]').forEach(inp => {
-          // update on input for immediate save
           inp.addEventListener('input', () => {
             const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
             const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
@@ -419,12 +433,10 @@
             else ex[field] = parseInt(inp.value) || 0;
             savePlan(p);
           });
-          // re-render on blur to normalize formatting
           inp.addEventListener('blur', () => renderPlan());
         });
       }
 
-      // init wiring
       function init(){
         qs('#sessionDate').value = fmtDate(new Date());
         buildExercisesUI(qs('#workoutType').value);
@@ -433,9 +445,10 @@
         qs('#addSessionBtn').addEventListener('click', () => {
           const s = readSessionForm();
           if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
-          const p = loadPlan(); p.push(s); savePlan(p); renderPlan();
-          // clear selections
-          qsa('#exercisesArea input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+          const p = loadPlan(); p.push(s); renderPlan();
+          // Reset controls
+          qsa('#exercisesArea input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+          qsa('#exercisesArea .ex-item').forEach(el => el.classList.remove('selected'));
           qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
         });
 
@@ -465,10 +478,6 @@
 
         renderPlan();
       }
-
-      // Expose helpers (optional)
-      window.buildExercisesUI = buildExercisesUI;
-      window.fmtDate = fmtDate;
 
       document.addEventListener('DOMContentLoaded', init);
     })();
