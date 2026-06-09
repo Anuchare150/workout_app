@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Workout Planner — Upper / Leg / Cardio</title>
+  <title>Workout Planner — Mobile Friendly Inputs</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <style id="appStyle">
+  <style>
     :root{
       --bg1:#0b1220;
       --bg2:#0f2540;
@@ -15,79 +15,87 @@
       --good: #10b981;
       --danger: #ef4444;
       --card-radius:12px;
+      --input-bg:#122033;
+      --input-border: rgba(255,255,255,0.12);
+      --max-width:1100px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#ffffff;padding:20px;-webkit-font-smoothing:antialiased;
+      color:#ffffff;padding:18px;-webkit-font-smoothing:antialiased;
     }
 
-    .app{max-width:1100px;margin:0 auto;background:rgba(255,255,255,0.01);border-radius:var(--card-radius);padding:18px;border:1px solid rgba(255,255,255,0.03)}
+    .container{max-width:var(--max-width);margin:0 auto}
+    .app{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:16px;border:1px solid rgba(255,255,255,0.03)}
 
-    header{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+    header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
     h1{margin:0;font-size:18px}
     p.lead{margin:0;color:var(--muted);font-size:13px}
 
     .panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-    
-    /* THE ABSOLUTE WEBKIT FIX FOR INVISIBLE TEXT ON IOS */
-    input[type="text"], input[type="date"], select, textarea {
+
+    /* Inputs: Mobile / iOS focused fixes */
+    input, select, textarea {
       width:100%;
-      padding:8px;
+      padding:10px;
       border-radius:8px;
-      border:1px solid rgba(255,255,255,0.2);
-      background-color: #162235 !important; 
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important; /* Forces iOS to display text color */
-      opacity: 1 !important; /* Stops iOS from graying out fields */
-      font-size: 16px !important; /* Prevents auto-zoom on click */
-      -webkit-appearance: none !important;
-      appearance: none !important;
+      border:1px solid var(--input-border);
+      background: var(--input-bg);
+      color: #fff;
+      font-size:16px; /* prevent iOS auto-zoom */
+      -webkit-text-fill-color: #fff; /* enforce color in iOS */
+      caret-color: #fff;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    /* Force visibility for placeholders */
-    input::placeholder, textarea::placeholder {
-      color: rgba(255,255,255,0.4) !important;
-      -webkit-text-fill-color: rgba(255,255,255,0.4) !important;
-      opacity: 1 !important;
+    /* small inline inputs */
+    .small-input {
+      min-width:72px;
+      max-width:140px;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid var(--input-border);
+      background: var(--input-bg);
+      color:#fff;
+      font-size:16px;
+      -webkit-text-fill-color:#fff;
+      caret-color:#fff;
+      -webkit-appearance: none;
+      appearance: none;
+      text-align:center;
     }
-    
+
+    /* specific fixes for number inputs across browsers */
+    input[type="number"]{-moz-appearance:textfield;}
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; -webkit-appearance: textfield; }
+
+    /* placeholder visibility */
+    ::placeholder { color: rgba(255,255,255,0.45); -webkit-text-fill-color: rgba(255,255,255,0.45); opacity:1; }
+
     .col-3{grid-column:span 3}
     .col-2{grid-column:span 2}
     .col-4{grid-column:span 4}
     .col-6{grid-column:span 6}
     .col-12{grid-column:span 12}
     .actions{display:flex;gap:8px;align-items:center}
-    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#ffffff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
-    button.ghost{background:transparent;color:#ffffff;border:1px solid rgba(255,255,255,0.15)}
-    .muted{color:var(--muted);font-size:13px}
+    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#ffffff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
+    button.ghost{background:transparent;color:#ffffff;border:1px solid rgba(255,255,255,0.12)}
 
     .ex-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-    .ex-item{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
-    .ex-item input[type="checkbox"]{transform:scale(1.15)}
-    .ex-name{min-width:150px;font-weight:700}
-    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
-    
-    /* INLINE TABLE INPUT FIX FOR IOS */
-    .small-input {
-      width:75px;
-      padding:6px;
-      border-radius:6px;
-      border:1px solid rgba(255,255,255,0.2);
-      background-color: #1e2d4a !important;
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-      opacity: 1 !important;
-      font-size: 15px !important;
-      text-align: center;
-      -webkit-appearance: none !important;
-      appearance: none !important;
-    }
+    .ex-item{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+    .ex-item input[type="checkbox"]{transform:scale(1.15);width:20px;height:20px}
+    .ex-name{min-width:140px;font-weight:700}
+    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
 
     .plan{display:flex;flex-direction:column;gap:10px}
     .session{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
@@ -101,93 +109,100 @@
     .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
 
     .controls{display:flex;gap:8px;align-items:center}
-    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#ffffff;-webkit-text-fill-color: #ffffff !important;resize:vertical}
+    .exportbox{width:100%;height:92px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:#fff;resize:vertical}
 
-    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700;padding:4px}
+    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700;padding:6px}
     .download-buttons{display:flex;gap:8px;margin-left:8px}
 
-    @media(max-width:900px){
+    .muted{color:var(--muted);font-size:13px}
+
+    @media (max-width:900px){
       .col-3{grid-column:span 6}
       .col-2{grid-column:span 6}
       .meta{width:140px}
-      .small-input{width:65px}
+      .small-input{min-width:60px;padding:8px;font-size:15px}
     }
   </style>
 </head>
 <body>
-  <div class="app" role="application">
-    <header>
-      <div class="logo">WP</div>
-      <div>
-        <h1>Workout Planner</h1>
-        <p class="lead">Track your Leg, Upper Body, or Cardio workouts directly inside your browser.</p>
-      </div>
-    </header>
-
-    <div class="panel">
-      <form id="sessionForm" onsubmit="return false;">
-        <div class="grid">
-          <div class="col-3">
-            <label class="small">Date</label>
-            <input id="sessionDate" type="date" />
-          </div>
-          <div class="col-3">
-            <label class="small">Workout type</label>
-            <select id="workoutType">
-              <option value="leg">Leg Workout</option>
-              <option value="upper">Upper Body</option>
-              <option value="cardio">Cardio</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label class="small">Session calories (kcal)</label>
-            <input id="sessionCalories" type="text" inputmode="numeric" value="0" />
-          </div>
-          <div class="col-3">
-            <label class="small">Notes</label>
-            <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
-          </div>
-
-          <div class="col-12">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <div style="font-weight:800">Exercises</div>
-            </div>
-            <div id="exercisesArea" class="ex-list"></div>
-          </div>
-
-          <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
-            <div class="actions">
-              <button id="addSessionBtn" type="button">Add Session</button>
-              <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
-            </div>
-            <div style="margin-left:auto" class="muted">Saved locally in your device.</div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <div id="planArea"></div>
-
-    <div class="panel" style="margin-top:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+  <div class="container">
+    <div class="app" role="application" aria-label="Workout Planner">
+      <header>
+        <div class="logo">WP</div>
         <div>
-          <strong>Backup & Restore Data</strong>
+          <h1>Workout Planner</h1>
+          <p class="lead">Leg, Upper Body, Cardio — set kg, sets, reps, and durations. Mobile friendly inputs.</p>
         </div>
-        <div class="controls">
-          <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
-          <button id="importBtn" class="ghost" type="button">Load JSON</button>
-          <div class="download-buttons">
-            <button id="downloadCss" class="ghost" type="button">Download CSS</button>
-            <button id="downloadJs" class="ghost" type="button">Download JS</button>
+      </header>
+
+      <div class="panel">
+        <form id="sessionForm" onsubmit="return false;">
+          <div class="grid">
+            <div class="col-3">
+              <label class="small">Date</label>
+              <input id="sessionDate" type="date" />
+            </div>
+            <div class="col-3">
+              <label class="small">Workout type</label>
+              <select id="workoutType" aria-label="Workout type">
+                <option value="leg">Leg Workout</option>
+                <option value="upper">Upper Body</option>
+                <option value="cardio">Cardio</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <label class="small">Session calories (kcal)</label>
+              <input id="sessionCalories" type="number" inputmode="numeric" value="0" min="0" />
+            </div>
+            <div class="col-3">
+              <label class="small">Notes</label>
+              <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
+            </div>
+
+            <div class="col-12">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                <div style="font-weight:800">Exercises</div>
+                <div class="muted">Tap to select, edit kg/sets/reps or duration/cal for cardio.</div>
+              </div>
+              <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
+            </div>
+
+            <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <div class="actions">
+                <button id="addSessionBtn" type="button">Add Session</button>
+                <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
+              </div>
+              <div style="margin-left:auto" class="muted">Saved locally on this device.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div id="planArea"></div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <strong>Backup & Restore Data</strong>
+            <div class="muted" style="margin-top:4px">Copy JSON to back up or paste to restore.</div>
+          </div>
+          <div class="controls">
+            <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
+            <button id="importBtn" class="ghost" type="button">Load JSON</button>
+            <div class="download-buttons">
+              <button id="downloadCss" class="ghost" type="button">Download CSS</button>
+              <button id="downloadJs" class="ghost" type="button">Download JS</button>
+            </div>
           </div>
         </div>
+        <textarea id="exportBox" class="exportbox" placeholder="Your data JSON will appear here..."></textarea>
       </div>
-      <textarea id="exportBox" class="exportbox" placeholder="Your data layout JSON string will show here..."></textarea>
     </div>
   </div>
 
-  <script id="appScript">
-    const STORAGE_KEY = 'workout_planner_ios_fixed_v2';
+  <script>
+    // Mobile-friendly Workout Planner
+    const STORAGE_KEY = 'workout_planner_mobile_v1';
 
     const CATALOG = {
       leg: [
@@ -210,148 +225,235 @@
 
     const qs = s => document.querySelector(s);
     const qsa = s => Array.from(document.querySelectorAll(s));
-    function fmtDate(d){ return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`; }
+
+    function fmtDate(d){
+      return `${d.getFullYear()}-${('0'+(d.getMonth()+1)).slice(-2)}-${('0'+d.getDate()).slice(-2)}`;
+    }
     function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
     function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
     function loadPlan(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
     function savePlan(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 
+    // Build exercise selection UI for chosen type
     function buildExercisesUI(type){
-      const area = qs('#exercisesArea'); area.innerHTML = '';
+      const area = qs('#exercisesArea');
+      area.innerHTML = '';
       (CATALOG[type] || []).forEach(ex => {
-        const el = document.createElement('div'); el.className = 'ex-item';
-        el.innerHTML = `<input type="checkbox" id="ck_${ex.id}" data-ex="${ex.id}">
-                        <div class="ex-name">${ex.name}</div>
-                        <div class="ex-controls"></div>`;
-        const ctrl = el.querySelector('.ex-controls');
+        const el = document.createElement('div');
+        el.className = 'ex-item';
+        // checkbox and name
+        const ck = document.createElement('input'); ck.type = 'checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
+        const nameDiv = document.createElement('div'); nameDiv.className = 'ex-name'; nameDiv.textContent = ex.name;
+        el.appendChild(ck);
+        el.appendChild(nameDiv);
+
+        // controls
+        const ctrl = document.createElement('div'); ctrl.className = 'ex-controls';
         if(type === 'cardio'){
-          ctrl.innerHTML = `<input type="text" inputmode="numeric" data-prop="duration" value="${ex.defaultDuration||20}" class="small-input" /> <span class="muted" style="font-size:12px">min</span>
-                            <input type="text" inputmode="numeric" data-prop="calories" value="0" class="small-input" placeholder="kcal" />`;
+          const dur = document.createElement('input'); dur.type = 'number'; dur.inputMode = 'numeric'; dur.min = 1; dur.value = ex.defaultDuration || 20;
+          dur.className = 'small-input'; dur.dataset.prop = 'duration';
+          const durLabel = document.createElement('div'); durLabel.className = 'muted'; durLabel.style.fontSize = '12px'; durLabel.textContent = 'min';
+          const cal = document.createElement('input'); cal.type = 'number'; cal.inputMode = 'numeric'; cal.min = 0; cal.value = 0; cal.className = 'small-input'; cal.dataset.prop = 'calories';
+          ctrl.appendChild(dur); ctrl.appendChild(durLabel); ctrl.appendChild(cal);
         } else {
-          ctrl.innerHTML = `<input type="text" inputmode="decimal" data-prop="weight" value="${ex.defaultWeight||0}" class="small-input" /> <span class="muted" style="font-size:12px">kg</span>
-                            <input type="text" inputmode="numeric" data-prop="sets" value="${ex.sets||3}" class="small-input" />
-                            <input type="text" inputmode="numeric" data-prop="reps" value="${ex.reps||10}" class="small-input" />`;
+          const weight = document.createElement('input'); weight.type = 'number'; weight.inputMode = 'decimal'; weight.step = '0.5'; weight.className = 'small-input'; weight.value = ex.defaultWeight || 0; weight.dataset.prop = 'weight';
+          const kg = document.createElement('div'); kg.className = 'muted'; kg.style.fontSize = '12px'; kg.textContent = 'kg';
+          const sets = document.createElement('input'); sets.type = 'number'; sets.inputMode = 'numeric'; sets.min = 1; sets.className = 'small-input'; sets.value = ex.sets || 3; sets.dataset.prop = 'sets';
+          const reps = document.createElement('input'); reps.type = 'number'; reps.inputMode = 'numeric'; reps.min = 1; reps.className = 'small-input'; reps.value = ex.reps || 10; reps.dataset.prop = 'reps';
+          ctrl.appendChild(weight); ctrl.appendChild(kg); ctrl.appendChild(sets); ctrl.appendChild(reps);
         }
+        el.appendChild(ctrl);
         area.appendChild(el);
       });
     }
 
+    // Read session data from form
     function readSessionForm(){
       const date = qs('#sessionDate').value || fmtDate(new Date());
       const type = qs('#workoutType').value;
       const exercises = [];
-      qsa('#exercisesArea .ex-item').forEach(item => {
-        if(!item.querySelector('input[type="checkbox"]').checked) return;
-        const exId = item.querySelector('input[type="checkbox"]').dataset.ex;
-        const cat = CATALOG[type].find(e=>e.id===exId);
-        if(!cat) return;
-        if(type==='cardio'){
-          exercises.push({
-            id: exId, name: cat.name,
-            durationMin: parseInt(item.querySelector('[data-prop="duration"]').value)||20,
-            calories: parseInt(item.querySelector('[data-prop="calories"]').value)||0
-          });
-        }else{
-          exercises.push({
-            id: exId, name: cat.name,
-            weightKg: parseFloat(item.querySelector('[data-prop="weight"]').value)||0,
-            sets: parseInt(item.querySelector('[data-prop="sets"]').value)||3,
-            reps: parseInt(item.querySelector('[data-prop="reps"]').value)||10
-          });
+      qsa('#exercisesArea .ex-item').forEach(item=>{
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        if(!checkbox || !checkbox.checked) return;
+        const exId = checkbox.dataset.ex;
+        const catalog = (CATALOG[type] || []).find(e => e.id === exId);
+        if(!catalog) return;
+        if(type === 'cardio'){
+          const duration = parseInt(item.querySelector('[data-prop="duration"]').value) || catalog.defaultDuration || 20;
+          const calories = parseInt(item.querySelector('[data-prop="calories"]').value) || 0;
+          exercises.push({ id: exId, name: catalog.name, durationMin: duration, calories });
+        } else {
+          const weightKg = parseFloat(item.querySelector('[data-prop="weight"]').value) || catalog.defaultWeight || 0;
+          const sets = parseInt(item.querySelector('[data-prop="sets"]').value) || catalog.sets || 3;
+          const reps = parseInt(item.querySelector('[data-prop="reps"]').value) || catalog.reps || 10;
+          exercises.push({ id: exId, name: catalog.name, weightKg, sets, reps });
         }
       });
       return {
-        id: 's'+Date.now(), date, weekday: weekdayName(parseDate(date)), type,
-        calories: parseInt(qs('#sessionCalories').value)||0,
-        notes: qs('#sessionNotes').value||'', exercises, done: false
+        id: 's' + Date.now(),
+        date,
+        weekday: weekdayName(parseDate(date)),
+        type,
+        calories: parseInt(qs('#sessionCalories').value) || 0,
+        notes: qs('#sessionNotes').value || '',
+        exercises,
+        done: false
       };
     }
 
+    // Render saved plan
     function renderPlan(){
       const plan = loadPlan();
-      const area = qs('#planArea'); area.innerHTML = '';
+      const area = qs('#planArea');
+      area.innerHTML = '';
       if(!plan.length){
         area.innerHTML = '<div class="panel muted">No workout sessions recorded yet.</div>';
         return;
       }
-      plan.forEach(s => {
-        const d = document.createElement('div'); d.className = 'session';
-        let rows = '';
-        s.exercises.forEach(e => {
-          if(s.type === 'cardio'){
-            rows += `<tr><td><strong>${e.name}</strong></td>
-                     <td><input type="text" inputmode="numeric" value="${e.durationMin}" data-sid="${s.id}" data-eid="${e.id}" data-p="durationMin" class="small-input"></td>
-                     <td><input type="text" inputmode="numeric" value="${e.calories||0}" data-sid="${s.id}" data-eid="${e.id}" data-p="calories" class="small-input"></td><td></td></tr>`;
+
+      plan.forEach(session => {
+        const card = document.createElement('div'); card.className = 'session';
+        const meta = document.createElement('div'); meta.className = 'meta';
+        meta.innerHTML = `<div class="date">${session.date}</div>
+                          <div class="weekday">${session.weekday} · ${session.type.toUpperCase()}</div>
+                          <div style="margin-top:6px" class="muted">Kcal: ${session.calories}</div>
+                          <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: ' + session.notes : ''}</div>
+                          <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
+                          <div style="margin-top:8px"><button class="trash" data-id="${session.id}" title="Delete">Delete</button></div>`;
+        card.appendChild(meta);
+
+        const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
+        const table = document.createElement('table');
+        let thead = '<thead>';
+        if(session.type === 'cardio'){
+          thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
+        } else {
+          thead += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
+        }
+        let tbody = '<tbody>';
+        session.exercises.forEach(ex => {
+          if(session.type === 'cardio'){
+            tbody += `<tr><td><strong>${ex.name}</strong></td>
+                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="durationMin" value="${ex.durationMin}"></td>
+                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="calories" value="${ex.calories||0}"></td>
+                      <td></td></tr>`;
           } else {
-            rows += `<tr><td><strong>${e.name}</strong></td>
-                     <td><input type="text" inputmode="decimal" value="${e.weightKg}" data-sid="${s.id}" data-eid="${e.id}" data-p="weightKg" class="small-input"></td>
-                     <td><input type="text" inputmode="numeric" value="${e.sets}" data-sid="${s.id}" data-eid="${e.id}" data-p="sets" class="small-input"></td>
-                     <td><input type="text" inputmode="numeric" value="${e.reps}" data-sid="${s.id}" data-eid="${e.id}" data-p="reps" class="small-input"></td></tr>`;
+            tbody += `<tr><td><strong>${ex.name}</strong></td>
+                      <td><input class="small-input" type="number" inputmode="decimal" step="0.5" data-sid="${session.id}" data-eid="${ex.id}" data-field="weightKg" value="${ex.weightKg}"></td>
+                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="sets" value="${ex.sets}"></td>
+                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="reps" value="${ex.reps}"></td></tr>`;
           }
         });
-
-        d.innerHTML = `<div class="meta">
-          <div class="date">${s.date}</div>
-          <div class="weekday">${s.weekday} · ${s.type.toUpperCase()}</div>
-          <div style="margin-top:6px" class="muted">Kcal: ${s.calories}</div>
-          <div class="muted" style="font-size:12px;margin-top:4px">${s.notes?'Note: '+s.notes:''}</div>
-          <div style="margin-top:12px"><button class="done-btn ${s.done}" data-id="${s.id}">${s.done?'Done':'Mark Done'}</button></div>
-          <div style="margin-top:8px"><button class="trash" data-id="${s.id}">Delete</button></div>
-        </div>
-        <div style="flex-grow:1">
-          <table>
-            <thead><tr><th>Exercise</th><th>${s.type==='cardio'?'Min':'Kg'}</th><th>${s.type==='cardio'?'Kcal':'Sets'}</th><th>${s.type==='cardio'?'':'Reps'}</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
-        area.appendChild(d);
+        tbody += '</tbody>';
+        table.innerHTML = thead + tbody;
+        exWrap.appendChild(table);
+        card.appendChild(exWrap);
+        area.appendChild(card);
       });
 
-      qsa('.done-btn').forEach(b => b.addEventListener('click', ()=>{
-        const p = loadPlan(); const s = p.find(x=>x.id===b.dataset.id); if(s){ s.done=!s.done; savePlan(p); renderPlan(); }
+      // Wire controls
+      qsa('.done-btn').forEach(b => b.addEventListener('click', () => {
+        const id = b.dataset.id;
+        const p = loadPlan(); const s = p.find(x => x.id === id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
       }));
-      qsa('.trash').forEach(b => b.addEventListener('click', ()=>{
-        if(confirm('Delete session?')){ savePlan(loadPlan().filter(x=>x.id!==b.dataset.id)); renderPlan(); }
-      }));
-      qsa('input[data-sid]').forEach(input => input.addEventListener('change', ()=>{
-        const p = loadPlan(); const s = p.find(x=>x.id===input.dataset.sid); if(!s) return;
-        const e = s.exercises.find(ex=>ex.id===input.dataset.eid); if(!e) return;
-        const field = input.dataset.p;
-        e[field] = field === 'weightKg' ? parseFloat(input.value)||0 : parseInt(input.value)||0;
+      qsa('.trash').forEach(b => b.addEventListener('click', () => {
+        if(!confirm('Delete session?')) return;
+        const id = b.dataset.id;
+        const p = loadPlan().filter(s => s.id !== id);
         savePlan(p); renderPlan();
       }));
+
+      // Inline edits: use 'input' for immediate feedback on mobile
+      qsa('input[data-sid]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
+          const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
+          const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
+          // parse accordingly
+          if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
+          else ex[field] = parseInt(inp.value) || 0;
+          savePlan(p);
+        });
+        // apply change on blur to re-render to keep UI updated & consistent
+        inp.addEventListener('blur', () => renderPlan());
+      });
     }
 
-    function downloadFile(name, content) {
-      const blob = new Blob([content], {type: 'text/plain'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
-      document.body.appendChild(a); a.click(); a.remove();
+    // Download helpers
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
     }
 
+    // Init app wiring
     function init(){
       qs('#sessionDate').value = fmtDate(new Date());
       buildExercisesUI(qs('#workoutType').value);
-      qs('#workoutType').addEventListener('change', (e)=>buildExercisesUI(e.target.value));
-      
-      qs('#addSessionBtn').addEventListener('click', ()=>{
-        const s = readSessionForm(); if(!s.exercises.length){ alert('Check at least one exercise!'); return; }
-        const p = loadPlan(); p.push(s); savePlan(p); renderPlan();
-        qsa('#exercisesArea input[type="checkbox"]').forEach(c=>c.checked=false);
+
+      qs('#workoutType').addEventListener('change', (e) => buildExercisesUI(e.target.value));
+
+      qs('#addSessionBtn').addEventListener('click', () => {
+        const s = readSessionForm();
+        if(!s.exercises.length){ alert('Please select at least one exercise.'); return; }
+        const plan = loadPlan(); plan.push(s); savePlan(plan); renderPlan();
+        // reset selections
+        qsa('#exercisesArea input[type="checkbox"]').forEach(cb => cb.checked = false);
         qs('#sessionNotes').value = ''; qs('#sessionCalories').value = '0';
       });
 
-      qs('#clearAllBtn').addEventListener('click', ()=>{ if(confirm('Clear all?')){ savePlan([]); renderPlan(); } });
-      qs('#exportBtn').addEventListener('click', ()=>{ qs('#exportBox').value = JSON.stringify(loadPlan()); alert('Data copied to export box.'); });
-      qs('#importBtn').addEventListener('click', ()=>{
-        try{ const data = JSON.parse(qs('#exportBox').value); if(Array.isArray(data)){ savePlan(data); renderPlan(); alert('Import complete!'); } }catch(e){ alert('Invalid JSON structural formatting.'); }
+      qs('#clearAllBtn').addEventListener('click', () => {
+        if(!confirm('Clear all saved sessions?')) return;
+        savePlan([]); renderPlan();
       });
 
-      qs('#downloadCss').addEventListener('click', () => downloadFile('style.css', qs('#appStyle').textContent));
-      qs('#downloadJs').addEventListener('click', () => downloadFile('script.js', qs('#appScript').textContent));
+      qs('#exportBtn').addEventListener('click', () => {
+        const data = JSON.stringify(loadPlan(), null, 2);
+        qs('#exportBox').value = data;
+        try { navigator.clipboard && navigator.clipboard.writeText(data); } catch(e){}
+        alert('JSON placed in the box and (if allowed) copied to clipboard.');
+      });
+
+      qs('#importBtn').addEventListener('click', () => {
+        const raw = qs('#exportBox').value.trim();
+        if(!raw){ alert('Paste JSON into the box to import.'); return; }
+        try {
+          const parsed = JSON.parse(raw);
+          if(!Array.isArray(parsed)) throw new Error('Expected an array of sessions');
+          savePlan(parsed);
+          renderPlan();
+          alert('Import complete.');
+        } catch (err) {
+          alert('Import failed: ' + (err && err.message ? err.message : 'invalid JSON'));
+        }
+      });
+
+      // Download CSS / JS: return the <style> and <script> content for saving
+      qs('#downloadCss').addEventListener('click', () => {
+        const content = Array.from(document.querySelectorAll('style')).map(s => s.textContent).join('\n\n');
+        downloadFile('style.css', content);
+      });
+      qs('#downloadJs').addEventListener('click', () => {
+        // gather only the main script (this one)
+        const script = document.querySelector('script[data-main="true"]');
+        const content = script ? script.textContent : '// script content not found';
+        downloadFile('script.js', content);
+      });
 
       renderPlan();
     }
+
+    // Expose small helper used in markup
+    window.fmtDate = fmtDate;
+    window.buildExercisesUI = buildExercisesUI;
+
+    // mark main script for download reference
+    document.currentScript.setAttribute('data-main', 'true');
+
+    // start
     init();
   </script>
 </body>
