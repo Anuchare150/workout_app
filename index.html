@@ -4,523 +4,569 @@
   <meta charset="utf-8" />
   <title>Workout Planner — Upper / Leg / Cardio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    :root{
-      --bg1:#0b1220;
-      --bg2:#0f2540;
-      --panel: rgba(255,255,255,0.03);
-      --muted: rgba(255,255,255,0.72);
-      --accent1: #7c3aed;
-      --accent2: #06b6d4;
-      --good: #10b981;
-      --danger: #ef4444;
-      --glass: rgba(255,255,255,0.02);
-      --card-radius:12px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#fff;padding:20px;-webkit-font-smoothing:antialiased;
-    }
+  <!-- Embedded CSS (also downloadable as style.css) -->
+  <style id="styleFile">
+:root{
+  --bg1:#0b1220;
+  --bg2:#0f2540;
+  --panel: rgba(255,255,255,0.03);
+  --muted: rgba(255,255,255,0.72);
+  --accent1: #7c3aed;
+  --accent2: #06b6d4;
+  --good: #10b981;
+  --danger: #ef4444;
+  --glass: rgba(255,255,255,0.02);
+  --card-radius:12px;
+  --max-width:1100px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:#fff;padding:20px;-webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.container{max-width:var(--max-width);margin:0 auto}
+.app{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:18px;border:1px solid rgba(255,255,255,0.03)}
+header{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+h1{margin:0;font-size:18px}
+.lead{margin:0;color:var(--muted);font-size:13px}
+.panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+input[type="number"], input[type="date"], select, textarea, input[type="text"]{
+  width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;
+}
+.col-3{grid-column:span 3}
+.col-2{grid-column:span 2}
+.col-4{grid-column:span 4}
+.col-6{grid-column:span 6}
+.col-12{grid-column:span 12}
+.actions{display:flex;gap:8px;align-items:center}
+button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+button.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)}
+.muted{color:var(--muted);font-size:13px}
 
-    .app{max-width:1100px;margin:0 auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:18px;border:1px solid rgba(255,255,255,0.03)}
+/* exercises list */
+.ex-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.ex-item{display:flex;gap:8px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+.ex-item input[type="checkbox"]{transform:scale(1.15)}
+.ex-name{min-width:150px;font-weight:700}
+.ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
+.small-input{width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
 
-    header{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
-    h1{margin:0;font-size:18px}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
+/* plan area */
+.plan{display:flex;flex-direction:column;gap:10px}
+.session{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.session .meta{width:170px;flex-shrink:0}
+.session .date{font-weight:800}
+.session .weekday{color:var(--muted);font-size:13px;margin-top:4px}
+table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03)}
+th{color:var(--muted);font-weight:700;font-size:13px}
+.done-btn{margin-left:auto;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
+.done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
+.controls{display:flex;gap:8px;align-items:center}
+.exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:transparent;color:#fff;resize:vertical}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700;color:#fff}
+.trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700}
+.download-buttons{display:flex;gap:8px;margin-left:8px}
+.footer-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px}
 
-    .panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
-    label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-    input[type="number"], input[type="date"], select, textarea, input[type="text"]{
-      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;
-    }
-    .col-3{grid-column:span 3}
-    .col-2{grid-column:span 2}
-    .col-4{grid-column:span 4}
-    .col-6{grid-column:span 6}
-    .col-12{grid-column:span 12}
-    .actions{display:flex;gap:8px;align-items:center}
-    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
-    button.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)}
-    .muted{color:var(--muted);font-size:13px}
-
-    /* exercises list */
-    .ex-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-    .ex-item{display:flex;gap:8px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
-    .ex-item input[type="checkbox"]{transform:scale(1.15)}
-    .ex-name{min-width:150px;font-weight:700}
-    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
-    .small-input{width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
-
-    /* plan area */
-    .plan{display:flex;flex-direction:column;gap:10px}
-    .session{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-    .session .meta{width:170px;flex-shrink:0}
-    .session .date{font-weight:800}
-    .session .weekday{color:var(--muted);font-size:13px;margin-top:4px}
-    table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
-    th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03)}
-    th{color:var(--muted);font-weight:700;font-size:13px}
-    .done-btn{margin-left:auto;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
-    .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
-
-    .controls{display:flex;gap:8px;align-items:center}
-    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:transparent;color:#fff;resize:vertical}
-
-    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700;color:#fff}
-    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700}
-
-    @media(max-width:900px){
-      .col-3{grid-column:span 6}
-      .col-2{grid-column:span 6}
-      .meta{width:140px}
-      .small-input{width:60px}
-    }
+/* responsive */
+@media(max-width:900px){
+  .col-3{grid-column:span 6}
+  .col-2{grid-column:span 6}
+  .meta{width:140px}
+  .small-input{width:60px}
+}
   </style>
 </head>
 <body>
-  <div class="app" role="application">
-    <header>
-      <div class="logo">WP</div>
-      <div>
-        <h1>Workout Planner</h1>
-        <p class="lead">Choose Upper Body, Leg, or Cardio. Add exercises with kg, sets, reps and track sessions.</p>
-      </div>
-    </header>
-
-    <div class="panel" aria-label="Session builder">
-      <form id="sessionForm" onsubmit="return false;">
-        <div class="grid">
-          <div class="col-3">
-            <label class="small">Date</label>
-            <input id="sessionDate" type="date" />
-          </div>
-          <div class="col-3">
-            <label class="small">Workout type</label>
-            <select id="workoutType">
-              <option value="leg">Leg Workout</option>
-              <option value="upper">Upper Body</option>
-              <option value="cardio">Cardio</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label class="small">Session calories (kcal)</label>
-            <input id="sessionCalories" type="number" min="0" value="0" />
-          </div>
-          <div class="col-3">
-            <label class="small">Notes (optional)</label>
-            <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
-          </div>
-
-          <div class="col-12">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-weight:800">Select exercises & set weight/sets/reps</div>
-              <div class="muted">Toggle an exercise, set weight (kg), sets and reps. For cardio set duration (min) instead of kg.</div>
-            </div>
-
-            <div id="exercisesArea" class="ex-list" style="margin-top:10px"></div>
-          </div>
-
-          <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
-            <div class="actions">
-              <button id="addSessionBtn" type="button">Add Session</button>
-              <button id="clearAllBtn" type="button" class="ghost">Clear All Sessions</button>
-            </div>
-            <div style="margin-left:auto" class="muted">Sessions are saved locally in this browser.</div>
-          </div>
-
-        </div>
-      </form>
-    </div>
-
-    <div id="planArea"></div>
-
-    <div class="panel" style="margin-top:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
+  <div class="container">
+    <div class="app" role="application" aria-label="Workout Planner">
+      <header>
+        <div class="logo">WP</div>
         <div>
-          <strong>Export / Import</strong>
-          <div class="muted">Copy plan JSON to back up, or paste to restore.</div>
+          <h1>Workout Planner</h1>
+          <p class="lead">Choose Upper Body, Leg, or Cardio. Add exercises with kg, sets, reps and track sessions.</p>
         </div>
-        <div class="controls">
-          <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
-          <button id="importBtn" class="ghost" type="button">Load from JSON</button>
-        </div>
+      </header>
+
+      <div class="panel" aria-label="Session builder">
+        <form id="sessionForm" onsubmit="return false;">
+          <div class="grid">
+            <div class="col-3">
+              <label class="small">Date</label>
+              <input id="sessionDate" type="date" />
+            </div>
+            <div class="col-3">
+              <label class="small">Workout type</label>
+              <select id="workoutType">
+                <option value="leg">Leg Workout</option>
+                <option value="upper">Upper Body</option>
+                <option value="cardio">Cardio</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <label class="small">Session calories (kcal)</label>
+              <input id="sessionCalories" type="number" min="0" value="0" />
+            </div>
+            <div class="col-3">
+              <label class="small">Notes (optional)</label>
+              <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
+            </div>
+
+            <div class="col-12">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-weight:800">Select exercises & set weight/sets/reps</div>
+                <div class="muted">Toggle an exercise, set weight (kg), sets and reps. For cardio set duration (min) and calories.</div>
+              </div>
+
+              <div id="exercisesArea" class="ex-list" style="margin-top:10px"></div>
+            </div>
+
+            <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <div class="actions">
+                <button id="addSessionBtn" type="button">Add Session</button>
+                <button id="clearAllBtn" type="button" class="ghost">Clear All Sessions</button>
+              </div>
+              <div style="margin-left:auto" class="muted">Sessions are saved locally in this browser.</div>
+            </div>
+
+          </div>
+        </form>
       </div>
-      <textarea id="exportBox" class="exportbox" placeholder="Plan JSON appears here"></textarea>
+
+      <div id="planArea"></div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <strong>Export / Import</strong>
+            <div class="muted">Copy plan JSON to back up, or paste to restore.</div>
+          </div>
+          <div class="controls" style="align-items:center">
+            <div style="display:flex;gap:8px">
+              <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
+              <button id="importBtn" class="ghost" type="button">Load from JSON</button>
+            </div>
+            <div class="download-buttons">
+              <button id="downloadStyle" class="ghost" type="button" title="Download style.css">Download style.css</button>
+              <button id="downloadScript" class="ghost" type="button" title="Download script.js">Download script.js</button>
+              <button id="downloadIndex" class="ghost" type="button" title="Download index.html referencing downloaded files">Download index.html</button>
+            </div>
+          </div>
+        </div>
+        <textarea id="exportBox" class="exportbox" placeholder="Plan JSON appears here"></textarea>
+      </div>
+
+      <div class="footer-row">
+        <div class="muted">Local storage key: <code>simple_workout_planner_v1</code></div>
+        <div class="muted">Tip: after downloading the three files, place them together to run offline.</div>
+      </div>
     </div>
   </div>
 
-  <script>
-    // Single-file app: Workout Planner (Upper / Leg / Cardio)
-    // Data saved in localStorage under key
-    const STORAGE_KEY = 'simple_workout_planner_v1';
+  <!-- Embedded JS (also downloadable as script.js). The same script executes the app. -->
+  <script id="scriptFile">
+/* Workout Planner script.js
+   This script runs the app and also provides download helpers that let you save
+   style.css, script.js and a simple index.html that references them.
+*/
+(function(){
+  const STORAGE_KEY = 'simple_workout_planner_v1';
 
-    // Exercise catalogs
-    const CATALOG = {
-      leg: [
-        { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
-        { id:'legcurl', name:'Leg Curl', defaultWeight:26, sets:3, reps:10 },
-        { id:'squats', name:'Weighted Squats', defaultWeight:4, sets:3, reps:10 },
-        { id:'lunges', name:'Lunges', defaultWeight:2, sets:3, reps:10 }
-      ],
-      upper: [
-        { id:'pull', name:'Pulling (e.g. Bent-over row / Pull-down)', defaultWeight:20, sets:3, reps:8 },
-        { id:'bench', name:'Bench Press', defaultWeight:20, sets:3, reps:8 },
-        { id:'ohp', name:'Overhead Press', defaultWeight:10, sets:3, reps:8 },
-        { id:'dbrow', name:'Dumbbell Row', defaultWeight:12, sets:3, reps:8 },
-        { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
-      ],
-      cardio: [
-        { id:'treadmill', name:'Treadmill Running', defaultDuration:20 /* minutes */ }
-      ]
-    };
+  const CATALOG = {
+    leg: [
+      { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
+      { id:'legcurl', name:'Leg Curl', defaultWeight:26, sets:3, reps:10 },
+      { id:'squats', name:'Weighted Squats', defaultWeight:4, sets:3, reps:10 },
+      { id:'lunges', name:'Lunges', defaultWeight:2, sets:3, reps:10 }
+    ],
+    upper: [
+      { id:'pull', name:'Pulling (e.g. Bent-over row / Pull-down)', defaultWeight:20, sets:3, reps:8 },
+      { id:'bench', name:'Bench Press', defaultWeight:20, sets:3, reps:8 },
+      { id:'ohp', name:'Overhead Press', defaultWeight:10, sets:3, reps:8 },
+      { id:'dbrow', name:'Dumbbell Row', defaultWeight:12, sets:3, reps:8 },
+      { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
+    ],
+    cardio: [
+      { id:'treadmill', name:'Treadmill Running', defaultDuration:20 }
+    ]
+  };
 
-    // Utilities
-    const qs = s => document.querySelector(s);
-    const qsa = s => Array.from(document.querySelectorAll(s));
-    function fmtDate(d){ const y=d.getFullYear(); const m=('0'+(d.getMonth()+1)).slice(-2); const day=('0'+d.getDate()).slice(-2); return `${y}-${m}-${day}`; }
-    function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
-    function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
+  const qs = s => document.querySelector(s);
+  const qsa = s => Array.from(document.querySelectorAll(s));
+  function fmtDate(d){ const y=d.getFullYear(); const m=('0'+(d.getMonth()+1)).slice(-2); const day=('0'+d.getDate()).slice(-2); return `${y}-${m}-${day}`; }
+  function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
+  function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
-    // Load/save
-    function loadPlan(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
-    function savePlan(plan){ localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); }
+  function loadPlan(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+  function savePlan(plan){ localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); }
 
-    // Build exercises UI depending on selected type
-    function buildExercisesUI(type){
-      const area = qs('#exercisesArea');
-      area.innerHTML = '';
-      const list = CATALOG[type] || [];
-      list.forEach(ex => {
-        const el = document.createElement('div');
-        el.className = 'ex-item';
-        // checkbox, name
-        const ck = document.createElement('input'); ck.type='checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
-        const name = document.createElement('div'); name.className='ex-name'; name.textContent = ex.name;
-        el.appendChild(ck);
-        el.appendChild(name);
+  function buildExercisesUI(type){
+    const area = qs('#exercisesArea');
+    area.innerHTML = '';
+    const list = CATALOG[type] || [];
+    list.forEach(ex => {
+      const el = document.createElement('div');
+      el.className = 'ex-item';
+      const ck = document.createElement('input'); ck.type='checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
+      const name = document.createElement('div'); name.className='ex-name'; name.textContent = ex.name;
+      el.appendChild(ck);
+      el.appendChild(name);
 
-        const controls = document.createElement('div');
-        controls.className = 'ex-controls';
+      const controls = document.createElement('div');
+      controls.className = 'ex-controls';
 
-        if(type === 'cardio'){
-          // duration (minutes) and estimated calories
-          const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)';
-          dur.dataset.prop = 'duration';
-          const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
-          const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories'; cal.title='Estimated calories';
-          controls.appendChild(dur);
-          controls.appendChild(durLabel);
-          controls.appendChild(cal);
-        } else {
-          // weight (kg), sets, reps
-          const w = document.createElement('input'); w.type='number'; w.step='0.5'; w.className='small-input'; w.value = ex.defaultWeight || 0; w.dataset.prop='weight'; w.title='Weight (kg)';
-          const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
-          const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
-          const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
-          controls.appendChild(w); controls.appendChild(kg);
-          controls.appendChild(sets); controls.appendChild(reps);
-        }
-
-        el.appendChild(controls);
-        area.appendChild(el);
-      });
-    }
-
-    // Create session object from current form UI
-    function readSessionFromForm(){
-      const date = qs('#sessionDate').value || fmtDate(new Date());
-      const type = qs('#workoutType').value;
-      const calories = Math.max(0, parseInt(qs('#sessionCalories').value || 0));
-      const notes = qs('#sessionNotes').value || '';
-      const exEls = qsa('#exercisesArea .ex-item');
-      const exercises = [];
-      exEls.forEach(item=>{
-        const ck = item.querySelector('input[type="checkbox"]');
-        if(!ck || !ck.checked) return;
-        const exId = ck.dataset.ex;
-        const catalog = (CATALOG[type] || []).find(e=>e.id===exId);
-        if(!catalog) return;
-        if(type === 'cardio'){
-          const durationInput = item.querySelector('input[data-prop="duration"]');
-          const calInput = item.querySelector('input[data-prop="calories"]');
-          const duration = Math.max(1, parseInt(durationInput.value || catalog.defaultDuration || 20));
-          const estCal = Math.max(0, parseInt(calInput.value || 0));
-          exercises.push({
-            id: exId,
-            name: catalog.name,
-            durationMin: duration,
-            calories: estCal
-          });
-        } else {
-          const weightInput = item.querySelector('input[data-prop="weight"]');
-          const setsInput = item.querySelector('input[data-prop="sets"]');
-          const repsInput = item.querySelector('input[data-prop="reps"]');
-          const weight = Math.max(0, parseFloat(weightInput.value || catalog.defaultWeight || 0));
-          const sets = Math.max(1, parseInt(setsInput.value || catalog.sets || 3));
-          const reps = Math.max(1, parseInt(repsInput.value || catalog.reps || 10));
-          exercises.push({
-            id: exId,
-            name: catalog.name,
-            weightKg: weight,
-            sets: sets,
-            reps: reps
-          });
-        }
-      });
-
-      return {
-        id: 's' + Date.now(),
-        date,
-        weekday: weekdayName(parseDate(date)),
-        type,
-        calories,
-        notes,
-        exercises,
-        done: false
-      };
-    }
-
-    // Render plan area
-    function renderPlan(){
-      const plan = loadPlan();
-      const area = qs('#planArea');
-      area.innerHTML = '';
-      const header = document.createElement('div');
-      header.className = 'panel';
-      header.style.marginBottom = '10px';
-      header.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>Planned Sessions</strong><div class="muted">${plan.length} session(s) saved</div></div>
-        <div style="display:flex;gap:8px">
-          <button id="exportNow" class="ghost" type="button">Export JSON</button>
-        </div>
-      </div>`;
-      area.appendChild(header);
-
-      const container = document.createElement('div');
-      container.className = 'plan';
-
-      if(plan.length === 0){
-        const p = document.createElement('div'); p.className = 'panel'; p.innerHTML = '<div class="muted">No sessions yet. Build a session above and click Add Session.</div>';
-        container.appendChild(p);
+      if(type === 'cardio'){
+        const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)'; dur.dataset.prop='duration';
+        const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
+        const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories'; cal.title='Estimated calories';
+        controls.appendChild(dur);
+        controls.appendChild(durLabel);
+        controls.appendChild(cal);
       } else {
-        plan.forEach(session=>{
-          const card = document.createElement('div'); card.className = 'session'; card.dataset.id = session.id;
-          const meta = document.createElement('div'); meta.className = 'meta';
-          meta.innerHTML = `<div class="date">${session.date}</div>
-                            <div class="weekday">${session.weekday} · ${session.type === 'leg' ? 'Leg' : session.type === 'upper' ? 'Upper Body' : 'Cardio'}</div>
-                            <div style="margin-top:8px"><div class="muted">Calories: <strong>${session.calories}</strong></div></div>
-                            <div style="margin-top:8px"><div class="muted">Notes: ${session.notes || '-'}</div></div>
-                            <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
-                            <div style="margin-top:8px"><button class="trash" data-id="${session.id}" title="Delete session">Delete</button></div>`;
-          card.appendChild(meta);
-
-          const exWrap = document.createElement('div'); exWrap.className = 'exercises';
-          const table = document.createElement('table');
-          const thead = document.createElement('thead');
-          if(session.type === 'cardio'){
-            thead.innerHTML = `<tr><th>Exercise</th><th>Duration (min)</th><th>Calories</th><th></th></tr>`;
-            const tbody = document.createElement('tbody');
-            session.exercises.forEach(ex=>{
-              const tr = document.createElement('tr');
-              tr.innerHTML = `<td><strong>${ex.name}</strong></td>
-                              <td><input type="number" min="1" value="${ex.durationMin}" data-session="${session.id}" data-ex="${ex.id}" data-prop="duration" class="small-input" /></td>
-                              <td><input type="number" min="0" value="${ex.calories || 0}" data-session="${session.id}" data-ex="${ex.id}" data-prop="cal" class="small-input" /></td>
-                              <td></td>`;
-              tbody.appendChild(tr);
-            });
-            table.appendChild(thead); table.appendChild(tbody);
-          } else {
-            thead.innerHTML = `<tr><th>Exercise</th><th>Weight (kg)</th><th>Sets</th><th>Reps</th></tr>`;
-            const tbody = document.createElement('tbody');
-            session.exercises.forEach(ex=>{
-              const tr = document.createElement('tr');
-              tr.innerHTML = `<td><strong>${ex.name}</strong></td>
-                              <td><input type="number" step="0.5" min="0" value="${ex.weightKg}" data-session="${session.id}" data-ex="${ex.id}" data-prop="weight" class="small-input" /></td>
-                              <td><input type="number" min="1" value="${ex.sets}" data-session="${session.id}" data-ex="${ex.id}" data-prop="sets" class="small-input" /></td>
-                              <td><input type="number" min="1" value="${ex.reps}" data-session="${session.id}" data-ex="${ex.id}" data-prop="reps" class="small-input" /></td>`;
-              tbody.appendChild(tr);
-            });
-            table.appendChild(thead); table.appendChild(tbody);
-          }
-          exWrap.appendChild(table);
-          card.appendChild(exWrap);
-          container.appendChild(card);
-        });
+        const w = document.createElement('input'); w.type='number'; w.step='0.5'; w.className='small-input'; w.value = ex.defaultWeight || 0; w.dataset.prop='weight'; w.title='Weight (kg)';
+        const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
+        const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
+        const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
+        controls.appendChild(w); controls.appendChild(kg);
+        controls.appendChild(sets); controls.appendChild(reps);
       }
 
-      area.appendChild(container);
+      el.appendChild(controls);
+      area.appendChild(el);
+    });
+  }
 
-      // Wire up buttons inside plan
-      qsa('.done-btn').forEach(btn=>{
-        btn.addEventListener('click', (ev)=>{
-          const id = btn.dataset.id;
-          toggleDone(id);
+  function readSessionFromForm(){
+    const date = qs('#sessionDate').value || fmtDate(new Date());
+    const type = qs('#workoutType').value;
+    const calories = Math.max(0, parseInt(qs('#sessionCalories').value || 0));
+    const notes = qs('#sessionNotes').value || '';
+    const exEls = qsa('#exercisesArea .ex-item');
+    const exercises = [];
+    exEls.forEach(item=>{
+      const ck = item.querySelector('input[type="checkbox"]');
+      if(!ck || !ck.checked) return;
+      const exId = ck.dataset.ex;
+      const catalog = (CATALOG[type] || []).find(e=>e.id===exId);
+      if(!catalog) return;
+      if(type === 'cardio'){
+        const durationInput = item.querySelector('input[data-prop="duration"]');
+        const calInput = item.querySelector('input[data-prop="calories"]');
+        const duration = Math.max(1, parseInt(durationInput.value || catalog.defaultDuration || 20));
+        const estCal = Math.max(0, parseInt(calInput.value || 0));
+        exercises.push({
+          id: exId,
+          name: catalog.name,
+          durationMin: duration,
+          calories: estCal
         });
-      });
-      qsa('.trash').forEach(btn=>{
-        btn.addEventListener('click', ()=> {
-          const id = btn.dataset.id;
-          if(confirm('Delete this session?')) { deleteSession(id); }
+      } else {
+        const weightInput = item.querySelector('input[data-prop="weight"]');
+        const setsInput = item.querySelector('input[data-prop="sets"]');
+        const repsInput = item.querySelector('input[data-prop="reps"]');
+        const weight = Math.max(0, parseFloat(weightInput.value || catalog.defaultWeight || 0));
+        const sets = Math.max(1, parseInt(setsInput.value || catalog.sets || 3));
+        const reps = Math.max(1, parseInt(repsInput.value || catalog.reps || 10));
+        exercises.push({
+          id: exId,
+          name: catalog.name,
+          weightKg: weight,
+          sets: sets,
+          reps: reps
         });
-      });
-
-      // Inline edits for inputs (weight/sets/reps/duration/cal)
-      qsa('input[data-session]').forEach(inp=>{
-        inp.addEventListener('change', ()=> {
-          const sessId = inp.dataset.session;
-          const exId = inp.dataset.ex;
-          const prop = inp.dataset.prop;
-          const valRaw = inp.value;
-          applyInlineEdit(sessId, exId, prop, valRaw);
-        });
-      });
-
-      // export now button (top-right)
-      const expBtn = qs('#exportNow');
-      if(expBtn) expBtn.addEventListener('click', ()=> {
-        const plan = loadPlan();
-        qs('#exportBox').value = JSON.stringify(plan, null, 2);
-        navigator.clipboard?.writeText(JSON.stringify(plan, null, 2)).then(()=> alert('Plan JSON copied to clipboard.'), ()=> alert('Export placed in box.'));
-      });
-    }
-
-    function applyInlineEdit(sessionId, exId, prop, raw){
-      const plan = loadPlan();
-      const s = plan.find(x=>x.id===sessionId);
-      if(!s) return;
-      const ex = s.exercises.find(e=>e.id===exId);
-      if(!ex) return;
-      let value;
-      if(prop === 'weight') value = Math.max(0, parseFloat(raw || 0));
-      else if(prop === 'sets' || prop === 'reps' || prop === 'duration') value = Math.max(1, parseInt(raw || 1));
-      else if(prop === 'cal') value = Math.max(0, parseInt(raw || 0));
-      else value = raw;
-      if(prop === 'cal') ex.calories = value;
-      else if(prop === 'duration') ex.durationMin = value;
-      else if(prop === 'weight') ex.weightKg = value;
-      else ex[prop] = value;
-      savePlan(plan);
-      renderPlan();
-    }
-
-    function toggleDone(id){
-      const plan = loadPlan();
-      const s = plan.find(x=>x.id===id);
-      if(!s) return;
-      s.done = !s.done;
-      savePlan(plan);
-      renderPlan();
-    }
-
-    function deleteSession(id){
-      let plan = loadPlan();
-      plan = plan.filter(s => s.id !== id);
-      savePlan(plan);
-      renderPlan();
-    }
-
-    function addSession(){
-      const session = readSessionFromForm();
-      if(session.exercises.length === 0){
-        alert('Please select at least one exercise for the session.');
-        return;
       }
-      const plan = loadPlan();
-      plan.push(session);
-      savePlan(plan);
-      renderPlan();
-      // clear checkboxes
-      qsa('#exercisesArea input[type="checkbox"]').forEach(cb=>cb.checked=false);
-      qs('#sessionCalories').value = 0;
-      qs('#sessionNotes').value = '';
-      showStatus('Session added.', true);
+    });
+
+    return {
+      id: 's' + Date.now(),
+      date,
+      weekday: weekdayName(parseDate(date)),
+      type,
+      calories,
+      notes,
+      exercises,
+      done: false
+    };
+  }
+
+  function renderPlan(){
+    const plan = loadPlan();
+    const area = qs('#planArea');
+    area.innerHTML = '';
+    const header = document.createElement('div');
+    header.className = 'panel';
+    header.style.marginBottom = '10px';
+    header.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+      <div><strong>Planned Sessions</strong><div class="muted">${plan.length} session(s) saved</div></div>
+      <div style="display:flex;gap:8px">
+        <button id="exportNow" class="ghost" type="button">Export JSON</button>
+      </div>
+    </div>`;
+    area.appendChild(header);
+
+    const container = document.createElement('div');
+    container.className = 'plan';
+
+    if(plan.length === 0){
+      const p = document.createElement('div'); p.className = 'panel'; p.innerHTML = '<div class="muted">No sessions yet. Build a session above and click Add Session.</div>';
+      container.appendChild(p);
+    } else {
+      plan.forEach(session=>{
+        const card = document.createElement('div'); card.className = 'session'; card.dataset.id = session.id;
+        const meta = document.createElement('div'); meta.className = 'meta';
+        meta.innerHTML = `<div class="date">${session.date}</div>
+                          <div class="weekday">${session.weekday} · ${session.type === 'leg' ? 'Leg' : session.type === 'upper' ? 'Upper Body' : 'Cardio'}</div>
+                          <div style="margin-top:8px"><div class="muted">Calories: <strong>${session.calories}</strong></div></div>
+                          <div style="margin-top:8px"><div class="muted">Notes: ${session.notes || '-'}</div></div>
+                          <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
+                          <div style="margin-top:8px"><button class="trash" data-id="${session.id}" title="Delete session">Delete</button></div>`;
+        card.appendChild(meta);
+
+        const exWrap = document.createElement('div'); exWrap.className = 'exercises';
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        if(session.type === 'cardio'){
+          thead.innerHTML = `<tr><th>Exercise</th><th>Duration (min)</th><th>Calories</th><th></th></tr>`;
+          const tbody = document.createElement('tbody');
+          session.exercises.forEach(ex=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td><strong>${ex.name}</strong></td>
+                            <td><input type="number" min="1" value="${ex.durationMin}" data-session="${session.id}" data-ex="${ex.id}" data-prop="duration" class="small-input" /></td>
+                            <td><input type="number" min="0" value="${ex.calories || 0}" data-session="${session.id}" data-ex="${ex.id}" data-prop="cal" class="small-input" /></td>
+                            <td></td>`;
+            tbody.appendChild(tr);
+          });
+          table.appendChild(thead); table.appendChild(tbody);
+        } else {
+          thead.innerHTML = `<tr><th>Exercise</th><th>Weight (kg)</th><th>Sets</th><th>Reps</th></tr>`;
+          const tbody = document.createElement('tbody');
+          session.exercises.forEach(ex=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td><strong>${ex.name}</strong></td>
+                            <td><input type="number" step="0.5" min="0" value="${ex.weightKg}" data-session="${session.id}" data-ex="${ex.id}" data-prop="weight" class="small-input" /></td>
+                            <td><input type="number" min="1" value="${ex.sets}" data-session="${session.id}" data-ex="${ex.id}" data-prop="sets" class="small-input" /></td>
+                            <td><input type="number" min="1" value="${ex.reps}" data-session="${session.id}" data-ex="${ex.id}" data-prop="reps" class="small-input" /></td>`;
+            tbody.appendChild(tr);
+          });
+          table.appendChild(thead); table.appendChild(tbody);
+        }
+        exWrap.appendChild(table);
+        card.appendChild(exWrap);
+        container.appendChild(card);
+      });
     }
 
-    function clearAllSessions(){
-      if(confirm('Delete all saved sessions?')){ savePlan([]); renderPlan(); showStatus('All sessions cleared.'); }
-    }
+    area.appendChild(container);
 
-    // Export/Import wiring
-    function exportPlanToBox(){
+    // Buttons
+    qsa('.done-btn').forEach(btn=>{
+      btn.addEventListener('click', (ev)=>{
+        const id = btn.dataset.id;
+        toggleDone(id);
+      });
+    });
+    qsa('.trash').forEach(btn=>{
+      btn.addEventListener('click', ()=> {
+        const id = btn.dataset.id;
+        if(confirm('Delete this session?')) { deleteSession(id); }
+      });
+    });
+
+    qsa('input[data-session]').forEach(inp=>{
+      inp.addEventListener('change', ()=> {
+        const sessId = inp.dataset.session;
+        const exId = inp.dataset.ex;
+        const prop = inp.dataset.prop;
+        const valRaw = inp.value;
+        applyInlineEdit(sessId, exId, prop, valRaw);
+      });
+    });
+
+    const expBtn = qs('#exportNow');
+    if(expBtn) expBtn.addEventListener('click', ()=> {
       const plan = loadPlan();
       qs('#exportBox').value = JSON.stringify(plan, null, 2);
       navigator.clipboard?.writeText(JSON.stringify(plan, null, 2)).then(()=> alert('Plan JSON copied to clipboard.'), ()=> alert('Export placed in box.'));
+    });
+  }
+
+  function applyInlineEdit(sessionId, exId, prop, raw){
+    const plan = loadPlan();
+    const s = plan.find(x=>x.id===sessionId);
+    if(!s) return;
+    const ex = s.exercises.find(e=>e.id===exId);
+    if(!ex) return;
+    let value;
+    if(prop === 'weight') value = Math.max(0, parseFloat(raw || 0));
+    else if(prop === 'sets' || prop === 'reps' || prop === 'duration') value = Math.max(1, parseInt(raw || 1));
+    else if(prop === 'cal') value = Math.max(0, parseInt(raw || 0));
+    else value = raw;
+    if(prop === 'cal') ex.calories = value;
+    else if(prop === 'duration') ex.durationMin = value;
+    else if(prop === 'weight') ex.weightKg = value;
+    else ex[prop] = value;
+    savePlan(plan);
+    renderPlan();
+  }
+
+  function toggleDone(id){
+    const plan = loadPlan();
+    const s = plan.find(x=>x.id===id);
+    if(!s) return;
+    s.done = !s.done;
+    savePlan(plan);
+    renderPlan();
+  }
+
+  function deleteSession(id){
+    let plan = loadPlan();
+    plan = plan.filter(s => s.id !== id);
+    savePlan(plan);
+    renderPlan();
+  }
+
+  function addSession(){
+    const session = readSessionFromForm();
+    if(session.exercises.length === 0){
+      alert('Please select at least one exercise for the session.');
+      return;
     }
-    function importPlanFromBox(){
-      const raw = qs('#exportBox').value.trim();
-      if(!raw){ alert('Paste plan JSON into the box to import.'); return; }
-      try{
-        const parsed = JSON.parse(raw);
-        if(!Array.isArray(parsed)) {
-          // support wrapped format if older export was an object
-          if(parsed.days && Array.isArray(parsed.days)) {
-            // transform to sessions array (if present as object)
-            const sessions = parsed.days.map(d => {
-              // attempt to standardize
-              return {
-                id: d.id || ('s'+Date.now()),
-                date: d.date || fmtDate(new Date()),
-                weekday: d.weekday || '',
-                type: d.type || 'leg',
-                calories: d.calories || 0,
-                notes: '',
-                exercises: d.exercises || [],
-                done: d.done || false
-              };
-            });
-            savePlan(sessions);
-            renderPlan();
-            alert('Imported plan (converted) and saved.');
-            return;
-          }
-          throw new Error('Expected JSON array of sessions.');
+    const plan = loadPlan();
+    plan.push(session);
+    savePlan(plan);
+    renderPlan();
+    qsa('#exercisesArea input[type="checkbox"]').forEach(cb=>cb.checked=false);
+    qs('#sessionCalories').value = 0;
+    qs('#sessionNotes').value = '';
+    showStatus('Session added.', true);
+  }
+
+  function clearAllSessions(){
+    if(confirm('Delete all saved sessions?')){ savePlan([]); renderPlan(); showStatus('All sessions cleared.'); }
+  }
+
+  function exportPlanToBox(){
+    const plan = loadPlan();
+    qs('#exportBox').value = JSON.stringify(plan, null, 2);
+    navigator.clipboard?.writeText(JSON.stringify(plan, null, 2)).then(()=> alert('Plan JSON copied to clipboard.'), ()=> alert('Export placed in box.'));
+  }
+
+  function importPlanFromBox(){
+    const raw = qs('#exportBox').value.trim();
+    if(!raw){ alert('Paste plan JSON into the box to import.'); return; }
+    try{
+      const parsed = JSON.parse(raw);
+      if(!Array.isArray(parsed)) {
+        if(parsed.days && Array.isArray(parsed.days)) {
+          const sessions = parsed.days.map(d => {
+            return {
+              id: d.id || ('s'+Date.now()),
+              date: d.date || fmtDate(new Date()),
+              weekday: d.weekday || '',
+              type: d.type || 'leg',
+              calories: d.calories || 0,
+              notes: '',
+              exercises: d.exercises || [],
+              done: d.done || false
+            };
+          });
+          savePlan(sessions);
+          renderPlan();
+          alert('Imported plan (converted) and saved.');
+          return;
         }
-        // basic validation: ensure structure minimal
-        const ok = parsed.every(s => s.id && s.date && Array.isArray(s.exercises));
-        if(!ok) throw new Error('Invalid session structure.');
-        savePlan(parsed);
-        renderPlan();
-        alert('Plan imported and saved.');
-      }catch(e){
-        alert('Import failed: ' + (e && e.message ? e.message : e));
+        throw new Error('Expected JSON array of sessions.');
       }
-    }
-
-    // Status small helper
-    function showStatus(msg, ok=true){
-      // small transient message using alert-like simple approach
-      // keep minimal: use alert? we'll use small floating message
-      // but to keep code simple, use window.alert for error & console for success
-      if(!ok) alert(msg);
-      else console.log(msg);
-    }
-
-    // Init wiring
-    function init(){
-      // default date = today
-      if(!qs('#sessionDate').value) qs('#sessionDate').value = fmtDate(new Date());
-      // build initial exercises UI
-      const typeSelect = qs('#workoutType');
-      buildExercisesUI(typeSelect.value);
-      typeSelect.addEventListener('change', ()=> {
-        buildExercisesUI(typeSelect.value);
-      });
-
-      qs('#addSessionBtn').addEventListener('click', addSession);
-      qs('#clearAllBtn').addEventListener('click', clearAllSessions);
-      qs('#exportBtn').addEventListener('click', exportPlanToBox);
-      qs('#importBtn').addEventListener('click', importPlanFromBox);
-
-      // render stored plan
+      const ok = parsed.every(s => s.id && s.date && Array.isArray(s.exercises));
+      if(!ok) throw new Error('Invalid session structure.');
+      savePlan(parsed);
       renderPlan();
+      alert('Plan imported and saved.');
+    }catch(e){
+      alert('Import failed: ' + (e && e.message ? e.message : e));
     }
+  }
 
-    init();
+  function showStatus(msg, ok=true){
+    if(!ok) alert(msg);
+    else console.log(msg);
+  }
+
+  function downloadContent(filename, content){
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // Build an index.html that references style.css and script.js
+  function buildIndexHtml(){
+    const title = 'Workout Planner';
+    const styleHref = 'style.css';
+    const scriptSrc = 'script.js';
+    const html = '<!doctype html>\\n' +
+      '<html lang="en">\\n<head>\\n<meta charset="utf-8"/>\\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>\\n' +
+      `<title>${title}</title>\\n` +
+      ` <link rel="stylesheet" href="${styleHref}">\\n` +
+      '</head>\\n<body>\\n' +
+      '<div id=\"app-root\">Open index.html together with style.css and script.js in the same folder.</div>\\n' +
+      ` <script src="${scriptSrc}"></script>\\n</body>\\n</html>`;
+    return html;
+  }
+
+  // DOM wiring and init
+  function init(){
+    if(!qs('#sessionDate').value) qs('#sessionDate').value = fmtDate(new Date());
+    const typeSelect = qs('#workoutType');
+    buildExercisesUI(typeSelect.value);
+    typeSelect.addEventListener('change', ()=> buildExercisesUI(typeSelect.value));
+
+    qs('#addSessionBtn').addEventListener('click', addSession);
+    qs('#clearAllBtn').addEventListener('click', clearAllSessions);
+    qs('#exportBtn').addEventListener('click', exportPlanToBox);
+    qs('#importBtn').addEventListener('click', importPlanFromBox);
+
+    qs('#downloadStyle').addEventListener('click', ()=> {
+      const styleTag = document.getElementById('styleFile');
+      const content = styleTag ? styleTag.textContent : '';
+      downloadContent('style.css', content);
+    });
+    qs('#downloadScript').addEventListener('click', ()=> {
+      const scriptTag = document.getElementById('scriptFile');
+      const content = scriptTag ? scriptTag.textContent : '';
+      downloadContent('script.js', content);
+    });
+    qs('#downloadIndex').addEventListener('click', ()=>{
+      const html = buildIndexHtml();
+      downloadContent('index.html', html);
+    });
+
+    renderPlan();
+  }
+
+  // Expose a couple utilities to functions above
+  window.fmtDate = fmtDate;
+  window.parseDate = parseDate;
+  window.weekdayName = weekdayName;
+  window.buildExercisesUI = buildExercisesUI;
+  window.readSessionFromForm = readSessionFromForm;
+  window.renderPlan = function(){ renderPlan(); };
+
+  // Start the app
+  document.addEventListener('DOMContentLoaded', init);
+})();
   </script>
 </body>
 </html>
