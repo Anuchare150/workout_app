@@ -2,191 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Workout Routine Builder — Fix Generate</title>
+  <title>Workout Planner — Upper / Leg / Cardio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root{
-      --bg-1:#071032; --bg-2:#08233f;
-      --accent:#7c3aed; --accent-2:#06b6d4;
-      --muted:rgba(255,255,255,0.72);
-      --card:rgba(255,255,255,0.03);
-      --shadow:0 10px 30px rgba(2,6,23,0.28);
-      --success:#10b981; --danger:#ef4444;
+      --bg1:#0b1220;
+      --bg2:#0f2540;
+      --panel: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.72);
+      --accent1: #7c3aed;
+      --accent2: #06b6d4;
+      --good: #10b981;
+      --danger: #ef4444;
+      --glass: rgba(255,255,255,0.02);
+      --card-radius:12px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 60%);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
       color:#fff;padding:20px;-webkit-font-smoothing:antialiased;
     }
-    .app{max-width:1100px;margin:0 auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px}
+
+    .app{max-width:1100px;margin:0 auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:18px;border:1px solid rgba(255,255,255,0.03)}
+
+    header{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
     h1{margin:0;font-size:18px}
     p.lead{margin:0;color:var(--muted);font-size:13px}
 
-    .panel{background:var(--card);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
+    .panel{background:var(--panel);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-    input[type="number"], input[type="date"], select, textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
+    input[type="number"], input[type="date"], select, textarea, input[type="text"]{
+      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;
+    }
     .col-3{grid-column:span 3}
     .col-2{grid-column:span 2}
     .col-4{grid-column:span 4}
     .col-6{grid-column:span 6}
     .col-12{grid-column:span 12}
     .actions{display:flex;gap:8px;align-items:center}
-    button{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
     button.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)}
     .muted{color:var(--muted);font-size:13px}
 
-    .preview{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-    .preview-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .wk-pill{padding:6px 8px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02);font-weight:700;color:#fff}
+    /* exercises list */
+    .ex-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .ex-item{display:flex;gap:8px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+    .ex-item input[type="checkbox"]{transform:scale(1.15)}
+    .ex-name{min-width:150px;font-weight:700}
+    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto}
+    .small-input{width:72px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
 
-    .days{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .day-card{display:flex;gap:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.03);align-items:flex-start}
-    .meta{width:170px;flex-shrink:0;color:#fff}
-    .date{font-weight:800;font-size:15px}
-    .weekday{color:var(--muted);font-size:13px;margin-top:4px}
-    .week-tag{display:inline-block;margin-top:8px;padding:6px 8px;border-radius:999px;background:rgba(124,58,237,0.12);color:var(--accent);font-weight:700;font-size:12px}
-
+    /* plan area */
+    .plan{display:flex;flex-direction:column;gap:10px}
+    .session{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .session .meta{width:170px;flex-shrink:0}
+    .session .date{font-weight:800}
+    .session .weekday{color:var(--muted);font-size:13px;margin-top:4px}
     table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
     th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03)}
     th{color:var(--muted);font-weight:700;font-size:13px}
-    .input-inline{display:inline-flex;align-items:center;gap:8px}
-    .weight-input{width:88px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
-    .unit{font-size:13px;color:var(--muted);min-width:28px;text-align:left}
-    .rep-input{width:72px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
-    .cal-input{width:88px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
-    .done{margin-left:auto;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;font-weight:800;border:0;cursor:pointer}
-    .done.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
-    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:var(--muted)}
-    .exportbox{width:100%;height:96px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:transparent;color:#fff;resize:vertical}
+    .done-btn{margin-left:auto;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
+    .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
 
-    .status{padding:8px 10px;border-radius:8px;margin-bottom:10px;display:none}
-    .status.show{display:block}
-    .status.ok{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.18);color:var(--success)}
-    .status.err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.12);color:var(--danger)}
+    .controls{display:flex;gap:8px;align-items:center}
+    .exportbox{width:100%;height:90px;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);background:transparent;color:#fff;resize:vertical}
 
-    .ex-tag{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;color:#111}
-    .tag-legpress{background:linear-gradient(90deg,#fef3c7,#fde68a)}
-    .tag-squats{background:linear-gradient(90deg,#fee2e2,#fecaca)}
-    .tag-legcurl{background:linear-gradient(90deg,#d1fae5,#a7f3d0)}
-    .tag-lunges{background:linear-gradient(90deg,#e0e7ff,#c7d2fe)}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700;color:#fff}
+    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700}
 
     @media(max-width:900px){
-      .meta{width:140px}
       .col-3{grid-column:span 6}
-      .col-2{grid-column:span 3}
-      .col-4{grid-column:span 6}
-      .col-6{grid-column:span 6}
-      .weight-input{width:76px}
+      .col-2{grid-column:span 6}
+      .meta{width:140px}
+      .small-input{width:60px}
     }
   </style>
 </head>
 <body>
-  <div class="app" role="application" aria-label="Workout Routine Builder">
+  <div class="app" role="application">
     <header>
-      <div class="logo">WR</div>
+      <div class="logo">WP</div>
       <div>
-        <h1>Workout Routine Builder</h1>
-        <p class="lead">Clear labels and reliable "Generate plan" behavior. All weights in kilograms (kg).</p>
+        <h1>Workout Planner</h1>
+        <p class="lead">Choose Upper Body, Leg, or Cardio. Add exercises with kg, sets, reps and track sessions.</p>
       </div>
     </header>
 
-    <div id="status" class="status"></div>
-
-    <div class="panel">
-      <!-- onsubmit prevented; buttons are explicit type="button" -->
-      <form id="configForm" onsubmit="return false;">
+    <div class="panel" aria-label="Session builder">
+      <form id="sessionForm" onsubmit="return false;">
         <div class="grid">
           <div class="col-3">
-            <label class="small">Start date</label>
-            <input id="startDate" type="date" />
+            <label class="small">Date</label>
+            <input id="sessionDate" type="date" />
           </div>
-          <div class="col-2">
-            <label class="small">Number of weeks</label>
-            <input id="weeks" type="number" min="1" max="52" value="4" />
-          </div>
-          <div class="col-2">
-            <label class="small">Sessions per week</label>
-            <select id="daysPerWeek">
-              <option value="2">2</option>
-              <option value="3" selected>3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
+          <div class="col-3">
+            <label class="small">Workout type</label>
+            <select id="workoutType">
+              <option value="leg">Leg Workout</option>
+              <option value="upper">Upper Body</option>
+              <option value="cardio">Cardio</option>
             </select>
           </div>
           <div class="col-3">
-            <label class="small">Sets (default)</label>
-            <input id="sets" type="number" min="1" max="8" value="3" />
+            <label class="small">Session calories (kcal)</label>
+            <input id="sessionCalories" type="number" min="0" value="0" />
+          </div>
+          <div class="col-3">
+            <label class="small">Notes (optional)</label>
+            <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
           </div>
 
-          <div class="col-12" style="margin-top:6px"><strong style="color:#fff">Exercise starting weights & weekly increase (kg)</strong></div>
-
-          <div class="col-3">
-            <label class="small">Leg Press - Start weight (kg)</label>
-            <input id="legPressStart" type="number" step="0.5" value="26" />
-          </div>
-          <div class="col-3">
-            <label class="small">Leg Press - Increase per week (kg)</label>
-            <input id="legPressInc" type="number" step="0.5" value="2" />
-          </div>
-
-          <div class="col-3">
-            <label class="small">Leg Curl - Start weight (kg)</label>
-            <input id="legCurlStart" type="number" step="0.5" value="26" />
-          </div>
-          <div class="col-3">
-            <label class="small">Leg Curl - Increase per week (kg)</label>
-            <input id="legCurlInc" type="number" step="0.5" value="2" />
-          </div>
-
-          <div class="col-3">
-            <label class="small">Weighted Squats - Start (kg)</label>
-            <input id="squatsStart" type="number" step="0.5" value="4" />
-          </div>
-          <div class="col-3">
-            <label class="small">Weighted Squats - Increase per week (kg)</label>
-            <input id="squatsInc" type="number" step="0.5" value="0.5" />
-          </div>
-
-          <div class="col-3">
-            <label class="small">Lunges - Start (kg)</label>
-            <input id="lungesStart" type="number" step="0.5" value="2" />
-          </div>
-          <div class="col-3">
-            <label class="small">Lunges - Increase per week (kg)</label>
-            <input id="lungesInc" type="number" step="0.5" value="0.5" />
-          </div>
-
-          <div class="col-4">
-            <label class="small">Default reps per set</label>
-            <input id="defaultReps" type="number" min="1" max="50" value="10" />
-          </div>
-          <div class="col-4">
-            <label class="small">Leg Press - Minimum (kg)</label>
-            <input id="legPressMin" type="number" step="0.5" value="26" />
-          </div>
-          <div class="col-4">
-            <label class="small">Leg Press - Maximum (kg)</label>
-            <input id="legPressMax" type="number" step="0.5" value="50" />
-          </div>
-
-          <div class="col-12" style="margin-top:8px;display:flex;gap:8px;align-items:center">
-            <div class="actions">
-              <button id="generateBtn" type="button">Generate Plan</button>
-              <button id="saveNow" type="button" class="ghost">Save Now</button>
-              <button id="clearBtn" type="button" class="ghost">Clear Saved</button>
+          <div class="col-12">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-weight:800">Select exercises & set weight/sets/reps</div>
+              <div class="muted">Toggle an exercise, set weight (kg), sets and reps. For cardio set duration (min) instead of kg.</div>
             </div>
-            <div style="margin-left:auto" class="muted">All data stored locally in your browser.</div>
+
+            <div id="exercisesArea" class="ex-list" style="margin-top:10px"></div>
           </div>
 
-          <div class="col-12" style="margin-top:8px">
-            <div style="font-weight:700;color:#fff;margin-bottom:6px">Per-week weight preview</div>
-            <div class="muted" style="margin-bottom:6px">Shows planned weight for each week. Leg Press and Leg Curl are clamped to min/max.</div>
-            <div id="preview" class="preview" aria-live="polite"></div>
+          <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <div class="actions">
+              <button id="addSessionBtn" type="button">Add Session</button>
+              <button id="clearAllBtn" type="button" class="ghost">Clear All Sessions</button>
+            </div>
+            <div style="margin-left:auto" class="muted">Sessions are saved locally in this browser.</div>
           </div>
 
         </div>
@@ -198,10 +142,10 @@
     <div class="panel" style="margin-top:12px">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
-          <strong style="color:#fff">Export / Import</strong>
-          <div class="muted">Copy your plan JSON to back up or paste to restore.</div>
+          <strong>Export / Import</strong>
+          <div class="muted">Copy plan JSON to back up, or paste to restore.</div>
         </div>
-        <div style="display:flex;gap:8px">
+        <div class="controls">
           <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
           <button id="importBtn" class="ghost" type="button">Load from JSON</button>
         </div>
@@ -211,335 +155,369 @@
   </div>
 
   <script>
-    // Small, robust single-file app. This version ensures Generate works reliably.
-    const STORAGE_KEY = 'workout_builder_fixed_generate_v1';
-    const exercises = [
-      { id:'legPress', name:'Leg Press', tag:'tag-legpress' },
-      { id:'squats', name:'Weighted Squats', tag:'tag-squats' },
-      { id:'legCurl', name:'Leg Curl', tag:'tag-legcurl' },
-      { id:'lunges', name:'Lunges', tag:'tag-lunges' }
-    ];
+    // Single-file app: Workout Planner (Upper / Leg / Cardio)
+    // Data saved in localStorage under key
+    const STORAGE_KEY = 'simple_workout_planner_v1';
+
+    // Exercise catalogs
+    const CATALOG = {
+      leg: [
+        { id:'legpress', name:'Leg Press', defaultWeight:26, sets:3, reps:10 },
+        { id:'legcurl', name:'Leg Curl', defaultWeight:26, sets:3, reps:10 },
+        { id:'squats', name:'Weighted Squats', defaultWeight:4, sets:3, reps:10 },
+        { id:'lunges', name:'Lunges', defaultWeight:2, sets:3, reps:10 }
+      ],
+      upper: [
+        { id:'pull', name:'Pulling (e.g. Bent-over row / Pull-down)', defaultWeight:20, sets:3, reps:8 },
+        { id:'bench', name:'Bench Press', defaultWeight:20, sets:3, reps:8 },
+        { id:'ohp', name:'Overhead Press', defaultWeight:10, sets:3, reps:8 },
+        { id:'dbrow', name:'Dumbbell Row', defaultWeight:12, sets:3, reps:8 },
+        { id:'curl', name:'Bicep Curl', defaultWeight:6, sets:3, reps:10 }
+      ],
+      cardio: [
+        { id:'treadmill', name:'Treadmill Running', defaultDuration:20 /* minutes */ }
+      ]
+    };
+
+    // Utilities
     const qs = s => document.querySelector(s);
     const qsa = s => Array.from(document.querySelectorAll(s));
-    const statusEl = qs('#status');
-
-    function showStatus(message, ok=true){
-      statusEl.textContent = message;
-      statusEl.className = 'status show ' + (ok ? 'ok' : 'err');
-      setTimeout(()=> { statusEl.className = 'status'; }, 3500);
-    }
-
-    function fmtDate(d){ const y=d.getFullYear(), m=('0'+(d.getMonth()+1)).slice(-2), day=('0'+d.getDate()).slice(-2); return `${y}-${m}-${day}`; }
+    function fmtDate(d){ const y=d.getFullYear(); const m=('0'+(d.getMonth()+1)).slice(-2); const day=('0'+d.getDate()).slice(-2); return `${y}-${m}-${day}`; }
     function parseDate(s){ return s ? new Date(s+'T00:00:00') : new Date(); }
     function weekdayName(d){ return d.toLocaleDateString(undefined,{weekday:'short'}); }
 
-    function getFormCfg(){
+    // Load/save
+    function loadPlan(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+    function savePlan(plan){ localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); }
+
+    // Build exercises UI depending on selected type
+    function buildExercisesUI(type){
+      const area = qs('#exercisesArea');
+      area.innerHTML = '';
+      const list = CATALOG[type] || [];
+      list.forEach(ex => {
+        const el = document.createElement('div');
+        el.className = 'ex-item';
+        // checkbox, name
+        const ck = document.createElement('input'); ck.type='checkbox'; ck.id = 'ck_'+ex.id; ck.dataset.ex = ex.id;
+        const name = document.createElement('div'); name.className='ex-name'; name.textContent = ex.name;
+        el.appendChild(ck);
+        el.appendChild(name);
+
+        const controls = document.createElement('div');
+        controls.className = 'ex-controls';
+
+        if(type === 'cardio'){
+          // duration (minutes) and estimated calories
+          const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.title='Duration (min)';
+          dur.dataset.prop = 'duration';
+          const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
+          const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories'; cal.title='Estimated calories';
+          controls.appendChild(dur);
+          controls.appendChild(durLabel);
+          controls.appendChild(cal);
+        } else {
+          // weight (kg), sets, reps
+          const w = document.createElement('input'); w.type='number'; w.step='0.5'; w.className='small-input'; w.value = ex.defaultWeight || 0; w.dataset.prop='weight'; w.title='Weight (kg)';
+          const kg = document.createElement('div'); kg.className='muted'; kg.style.fontSize='12px'; kg.textContent='kg';
+          const sets = document.createElement('input'); sets.type='number'; sets.min=1; sets.className='small-input'; sets.value = ex.sets || 3; sets.dataset.prop='sets';
+          const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
+          controls.appendChild(w); controls.appendChild(kg);
+          controls.appendChild(sets); controls.appendChild(reps);
+        }
+
+        el.appendChild(controls);
+        area.appendChild(el);
+      });
+    }
+
+    // Create session object from current form UI
+    function readSessionFromForm(){
+      const date = qs('#sessionDate').value || fmtDate(new Date());
+      const type = qs('#workoutType').value;
+      const calories = Math.max(0, parseInt(qs('#sessionCalories').value || 0));
+      const notes = qs('#sessionNotes').value || '';
+      const exEls = qsa('#exercisesArea .ex-item');
+      const exercises = [];
+      exEls.forEach(item=>{
+        const ck = item.querySelector('input[type="checkbox"]');
+        if(!ck || !ck.checked) return;
+        const exId = ck.dataset.ex;
+        const catalog = (CATALOG[type] || []).find(e=>e.id===exId);
+        if(!catalog) return;
+        if(type === 'cardio'){
+          const durationInput = item.querySelector('input[data-prop="duration"]');
+          const calInput = item.querySelector('input[data-prop="calories"]');
+          const duration = Math.max(1, parseInt(durationInput.value || catalog.defaultDuration || 20));
+          const estCal = Math.max(0, parseInt(calInput.value || 0));
+          exercises.push({
+            id: exId,
+            name: catalog.name,
+            durationMin: duration,
+            calories: estCal
+          });
+        } else {
+          const weightInput = item.querySelector('input[data-prop="weight"]');
+          const setsInput = item.querySelector('input[data-prop="sets"]');
+          const repsInput = item.querySelector('input[data-prop="reps"]');
+          const weight = Math.max(0, parseFloat(weightInput.value || catalog.defaultWeight || 0));
+          const sets = Math.max(1, parseInt(setsInput.value || catalog.sets || 3));
+          const reps = Math.max(1, parseInt(repsInput.value || catalog.reps || 10));
+          exercises.push({
+            id: exId,
+            name: catalog.name,
+            weightKg: weight,
+            sets: sets,
+            reps: reps
+          });
+        }
+      });
+
       return {
-        startDate: qs('#startDate').value || fmtDate(new Date()),
-        weeks: Math.max(1, parseInt(qs('#weeks').value || 4)),
-        daysPerWeek: Math.max(1, parseInt(qs('#daysPerWeek').value || 3)),
-        sets: Math.max(1, parseInt(qs('#sets').value || 3)),
-        defaultReps: Math.max(1, parseInt(qs('#defaultReps').value || 10)),
-        legPressStart: parseFloat(qs('#legPressStart').value || 26),
-        legPressInc: parseFloat(qs('#legPressInc').value || 2),
-        legCurlStart: parseFloat(qs('#legCurlStart').value || 26),
-        legCurlInc: parseFloat(qs('#legCurlInc').value || 2),
-        squatsStart: parseFloat(qs('#squatsStart').value || 4),
-        squatsInc: parseFloat(qs('#squatsInc').value || 0.5),
-        lungesStart: parseFloat(qs('#lungesStart').value || 2),
-        lungesInc: parseFloat(qs('#lungesInc').value || 0.5),
-        legPressMin: parseFloat(qs('#legPressMin').value || 26),
-        legPressMax: parseFloat(qs('#legPressMax').value || 50)
+        id: 's' + Date.now(),
+        date,
+        weekday: weekdayName(parseDate(date)),
+        type,
+        calories,
+        notes,
+        exercises,
+        done: false
       };
     }
 
-    function saveToStorage(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
-    function loadFromStorage(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
-    function clearStorage(){ localStorage.removeItem(STORAGE_KEY); qs('#exportBox').value=''; }
-
-    function clamp(v,min,max){ if(min!=null) v=Math.max(min,v); if(max!=null) v=Math.min(max,v); return v; }
-    function computeWeight(cfg, exId, weekIndex){
-      let w=0;
-      if(exId==='legPress'){ w = cfg.legPressStart + cfg.legPressInc * weekIndex; w = Math.round(clamp(w, cfg.legPressMin, cfg.legPressMax)*2)/2; }
-      else if(exId==='legCurl'){ w = cfg.legCurlStart + cfg.legCurlInc * weekIndex; w = Math.round(clamp(w, cfg.legPressMin, cfg.legPressMax)*2)/2; }
-      else if(exId==='squats'){ w = cfg.squatsStart + cfg.squatsInc * weekIndex; w = Math.round(Math.max(0,w)*2)/2; }
-      else if(exId==='lunges'){ w = cfg.lungesStart + cfg.lungesInc * weekIndex; w = Math.round(Math.max(0,w)*2)/2; }
-      return w;
-    }
-
-    function generatePlan(cfg){
-      const total = cfg.weeks * cfg.daysPerWeek;
-      const start = parseDate(cfg.startDate);
-      const days = [];
-      for(let i=0;i<total;i++){
-        const d = new Date(start);
-        d.setDate(start.getDate() + i);
-        const weekIndex = Math.floor(i / cfg.daysPerWeek);
-        days.push({
-          id: `d${i+1}`,
-          date: fmtDate(d),
-          weekday: weekdayName(d),
-          week: weekIndex+1,
-          calories: 0,
-          done: false,
-          exercises: exercises.map(ex => ({
-            id: ex.id,
-            name: ex.name,
-            tag: ex.tag,
-            sets: cfg.sets,
-            reps: cfg.defaultReps,
-            weight: computeWeight(cfg, ex.id, weekIndex)
-          }))
-        });
-      }
-      return { meta: { created: new Date().toISOString(), cfg }, days };
-    }
-
-    // preview
-    function renderPreview(cfg){
-      const container = qs('#preview');
-      container.innerHTML = '';
-      if(!cfg) return;
-      for(const ex of exercises){
-        const row = document.createElement('div');
-        row.className = 'preview-row';
-        row.innerHTML = `<div style="min-width:180px"><strong style="color:#fff">${ex.name}</strong><div class="muted">${ex.id}</div></div>`;
-        for(let w=0; w<cfg.weeks; w++){
-          const pill = document.createElement('div');
-          pill.className = 'wk-pill';
-          pill.textContent = `W${w+1}: ${computeWeight(cfg, ex.id, w)} kg`;
-          row.appendChild(pill);
-        }
-        if(ex.id==='legPress' || ex.id==='legCurl'){
-          const note = document.createElement('div');
-          note.className = 'muted';
-          note.style.marginLeft='8px';
-          note.textContent = `(clamped ${cfg.legPressMin}–${cfg.legPressMax} kg)`;
-          row.appendChild(note);
-        }
-        container.appendChild(row);
-      }
-    }
-
-    // render plan UI
-    function renderPlan(plan){
+    // Render plan area
+    function renderPlan(){
+      const plan = loadPlan();
       const area = qs('#planArea');
       area.innerHTML = '';
-      if(!plan){ area.innerHTML = `<div class="panel"><div class="muted">No plan generated. Configure and click Generate Plan.</div></div>`; return; }
+      const header = document.createElement('div');
+      header.className = 'panel';
+      header.style.marginBottom = '10px';
+      header.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>Planned Sessions</strong><div class="muted">${plan.length} session(s) saved</div></div>
+        <div style="display:flex;gap:8px">
+          <button id="exportNow" class="ghost" type="button">Export JSON</button>
+        </div>
+      </div>`;
+      area.appendChild(header);
 
-      const hdr = document.createElement('div');
-      hdr.className = 'panel';
-      hdr.style.display='flex'; hdr.style.justifyContent='space-between'; hdr.style.alignItems='center'; hdr.style.marginBottom='10px';
-      hdr.innerHTML = `<div><div style="font-weight:800;color:#fff">Generated Plan — ${plan.meta.cfg.weeks} week(s) · ${plan.meta.cfg.daysPerWeek} sessions/week</div>
-                       <div class="muted">Start ${plan.days[0].date} · Sets ${plan.meta.cfg.sets} · Reps ${plan.meta.cfg.defaultReps}</div></div>
-                       <div style="display:flex;gap:8px"><button id="saveBtn" type="button">Save</button></div>`;
-      area.appendChild(hdr);
+      const container = document.createElement('div');
+      container.className = 'plan';
 
-      const daysWrap = document.createElement('div');
-      daysWrap.className = 'days';
-      plan.days.forEach(day =>{
-        const card = document.createElement('div'); card.className='day-card'; card.dataset.dayId = day.id;
-        const meta = document.createElement('div'); meta.className='meta';
-        meta.innerHTML = `<div class="date">${day.date}</div><div class="weekday">${day.weekday} · Week ${day.week}</div>
-                          <div><span class="week-tag">W${day.week}</span></div>
-                          <div style="margin-top:10px"><label class="small">Calories</label>
-                          <div style="display:flex;gap:8px;align-items:center">
-                            <input type="number" class="cal-input" data-day="${day.id}" value="${day.calories||0}" min="0" />
-                            <button class="done ${day.done ? 'true' : 'false'}" data-day="${day.id}">${day.done ? 'Done' : 'Mark Done'}</button>
-                          </div></div>`;
-        card.appendChild(meta);
-
-        const exWrap = document.createElement('div'); exWrap.className='exercises';
-        const table = document.createElement('table');
-        table.innerHTML = `<thead><tr><th>Exercise</th><th>Weight</th><th>Sets</th><th>Reps</th></tr></thead>`;
-        const tbody = document.createElement('tbody');
-        day.exercises.forEach(ex=>{
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>
-                            <div style="display:flex;gap:8px;align-items:center">
-                              <span class="ex-tag ${ex.tag}" style="min-width:40px">${ex.name.split(' ')[0]}</span>
-                              <div style="min-width:0"><strong style="color:#fff">${ex.name}</strong><div class="muted">${ex.id}</div></div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="input-inline">
-                              <input type="number" step="0.5" class="weight-input" data-day="${day.id}" data-ex="${ex.id}" value="${ex.weight}" />
-                              <div class="unit">kg</div>
-                            </div>
-                          </td>
-                          <td>${ex.sets}</td>
-                          <td><input type="number" min="1" class="rep-input" data-day="${day.id}" data-ex="${ex.id}" value="${ex.reps}" /></td>`;
-          tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-        exWrap.appendChild(table);
-        card.appendChild(exWrap);
-        daysWrap.appendChild(card);
-      });
-
-      area.appendChild(daysWrap);
-
-      const footer = document.createElement('div');
-      footer.className = 'footer';
-      const totals = computeTotals(plan);
-      footer.innerHTML = `<div style="font-weight:700;color:#fff">Total planned calories: <span class="pill">${totals.totalCalories} kcal</span></div>
-                          <div class="muted">Edit weight (kg), reps or calories inline. Edits save automatically; click Save to ensure persistence.</div>`;
-      area.appendChild(footer);
-
-      // interactions
-      qs('#saveBtn').onclick = () => { savePlanFromUI(plan); showStatus('Plan saved locally.', true); renderPlan(loadFromStorage()); };
-
-      qsa('.weight-input').forEach(inp=>{
-        inp.addEventListener('change', ()=>{
-          const d = inp.dataset.day, exid = inp.dataset.ex;
-          let val = parseFloat(inp.value || 0);
-          const cfg = plan.meta.cfg;
-          if(exid==='legPress' || exid==='legCurl'){ val = clamp(val, cfg.legPressMin, cfg.legPressMax); inp.value = val; }
-          else { val = Math.max(0,val); inp.value = val; }
-          updatePlanValue(plan, d, exid, 'weight', val);
-          saveToStorage(plan);
-        });
-      });
-      qsa('.rep-input').forEach(inp=>{
-        inp.addEventListener('change', ()=>{
-          const d = inp.dataset.day, exid = inp.dataset.ex;
-          const v = Math.max(1, parseInt(inp.value||0)); inp.value = v;
-          updatePlanValue(plan, d, exid, 'reps', v); saveToStorage(plan);
-        });
-      });
-      qsa('.cal-input').forEach(inp=>{
-        inp.addEventListener('change', ()=>{
-          const d = inp.dataset.day; const v = Math.max(0, parseInt(inp.value||0)); inp.value = v;
-          updatePlanValue(plan, d, null, 'calories', v); saveToStorage(plan);
-          footer.querySelector('.pill').textContent = computeTotals(plan).totalCalories + ' kcal';
-        });
-      });
-      qsa('.done').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const d = btn.dataset.day; toggleDone(plan, d); saveToStorage(plan); renderPlan(plan);
-        });
-      });
-    }
-
-    function computeTotals(plan){ let total=0; plan.days.forEach(d=> total += Number(d.calories||0)); return { totalCalories: total }; }
-    function updatePlanValue(plan, dayId, exId, key, value){
-      const day = plan.days.find(dd=>dd.id===dayId); if(!day) return;
-      if(key==='calories'){ day.calories = Number(value); return; }
-      if(exId){ const ex = day.exercises.find(e=>e.id===exId); if(ex) ex[key] = value; }
-    }
-    function toggleDone(plan, dayId){ const day = plan.days.find(dd=>dd.id===dayId); if(day) day.done = !day.done; }
-
-    function savePlanFromUI(plan){
-      qsa('.rep-input').forEach(inp=>{ const d=inp.dataset.day, exid=inp.dataset.ex; const v=Math.max(1, parseInt(inp.value||0)); updatePlanValue(plan,d,exid,'reps',v); });
-      qsa('.cal-input').forEach(inp=>{ const d=inp.dataset.day; const v=Math.max(0, parseInt(inp.value||0)); updatePlanValue(plan,d,null,'calories',v); });
-      qsa('.weight-input').forEach(inp=>{ const d=inp.dataset.day, exid=inp.dataset.ex; const v=Math.max(0, parseFloat(inp.value||0)); updatePlanValue(plan,d,exid,'weight',v); });
-      saveToStorage(plan);
-    }
-
-    function exportJSON(plan){ return plan ? JSON.stringify(plan, null, 2) : ''; }
-    function importJSON(raw){ try{ const p = JSON.parse(raw); if(p && p.days && Array.isArray(p.days)) return p; throw new Error('Invalid plan structure'); }catch(e){ throw e; } }
-
-    // UI wiring (robust): ensure listener attached and form won't submit.
-    function initUI(){
-      // prevent form submit on enter anywhere
-      const form = qs('#configForm');
-      if(form){
-        form.addEventListener('submit', (e)=> { e.preventDefault(); });
-      }
-
-      // generate: explicit button type="button" ensures no submit; keep try/catch for errors
-      qs('#generateBtn').addEventListener('click', ()=>{
-        try{
-          const cfg = getFormCfg();
-          // basic validation
-          if(cfg.weeks <= 0) return showStatus('Weeks must be at least 1', false);
-          if(cfg.daysPerWeek <= 0) return showStatus('Sessions per week must be at least 1', false);
-          const plan = generatePlan(cfg);
-          saveToStorage(plan);
-          renderPreview(cfg);
-          renderPlan(plan);
-          qs('#exportBox').value = exportJSON(plan);
-          showStatus('Plan generated successfully', true);
-        }catch(err){
-          console.error('Generate error', err);
-          showStatus('Failed to generate plan: ' + (err && err.message ? err.message : 'unknown'), false);
-        }
-      });
-
-      qs('#saveNow').addEventListener('click', ()=>{
-        const plan = loadFromStorage();
-        if(plan){ showStatus('Plan saved locally.'); } else { showStatus('No plan to save. Generate first.', false); }
-      });
-
-      qs('#clearBtn').addEventListener('click', ()=>{
-        if(confirm('Clear saved plan from this browser?')){ clearStorage(); renderPlan(null); showStatus('Saved data cleared.'); }
-      });
-
-      qs('#exportBtn').addEventListener('click', ()=>{
-        const plan = loadFromStorage();
-        if(!plan){ showStatus('No plan saved yet. Generate one first.', false); return; }
-        const json = exportJSON(plan); qs('#exportBox').value = json;
-        navigator.clipboard?.writeText(json).then(()=> showStatus('Plan JSON copied to clipboard.'), ()=> showStatus('JSON placed in box; copy manually.', true));
-      });
-
-      qs('#importBtn').addEventListener('click', ()=>{
-        const raw = qs('#exportBox').value.trim();
-        if(!raw){ showStatus('Paste plan JSON into the box to import.', false); return; }
-        try{
-          const plan = importJSON(raw);
-          saveToStorage(plan);
-          renderPlan(plan);
-          if(plan.meta && plan.meta.cfg) renderPreview(plan.meta.cfg);
-          showStatus('Plan imported and saved.', true);
-        }catch(e){
-          console.error('Import failed', e);
-          showStatus('Import failed: ' + (e.message || 'invalid JSON'), false);
-        }
-      });
-
-      // live preview updates
-      const previewInputs = ['#legPressStart','#legPressInc','#legCurlStart','#legCurlInc','#squatsStart','#squatsInc','#lungesStart','#lungesInc','#weeks','#legPressMin','#legPressMax'];
-      previewInputs.forEach(sel=>{
-        const el = qs(sel);
-        if(!el) return;
-        el.addEventListener('input', ()=> {
-          const cfg = getFormCfg();
-          renderPreview(cfg);
-        });
-      });
-    }
-
-    function init(){
-      // default date
-      if(!qs('#startDate').value) qs('#startDate').value = fmtDate(new Date());
-      // load saved config if present
-      const saved = loadFromStorage();
-      if(saved && saved.meta && saved.meta.cfg){
-        const c = saved.meta.cfg;
-        qs('#startDate').value = c.startDate || qs('#startDate').value;
-        qs('#weeks').value = c.weeks;
-        qs('#daysPerWeek').value = c.daysPerWeek;
-        qs('#sets').value = c.sets;
-        qs('#defaultReps').value = c.defaultReps;
-        qs('#legPressStart').value = c.legPressStart;
-        qs('#legPressInc').value = c.legPressInc;
-        qs('#legCurlStart').value = c.legCurlStart;
-        qs('#legCurlInc').value = c.legCurlInc;
-        qs('#squatsStart').value = c.squatsStart;
-        qs('#squatsInc').value = c.squatsInc;
-        qs('#lungesStart').value = c.lungesStart;
-        qs('#lungesInc').value = c.lungesInc;
-        qs('#legPressMin').value = c.legPressMin;
-        qs('#legPressMax').value = c.legPressMax;
-        renderPreview(c);
-        renderPlan(saved);
-        qs('#exportBox').value = exportJSON(saved);
+      if(plan.length === 0){
+        const p = document.createElement('div'); p.className = 'panel'; p.innerHTML = '<div class="muted">No sessions yet. Build a session above and click Add Session.</div>';
+        container.appendChild(p);
       } else {
-        renderPreview(getFormCfg());
-        renderPlan(null);
+        plan.forEach(session=>{
+          const card = document.createElement('div'); card.className = 'session'; card.dataset.id = session.id;
+          const meta = document.createElement('div'); meta.className = 'meta';
+          meta.innerHTML = `<div class="date">${session.date}</div>
+                            <div class="weekday">${session.weekday} · ${session.type === 'leg' ? 'Leg' : session.type === 'upper' ? 'Upper Body' : 'Cardio'}</div>
+                            <div style="margin-top:8px"><div class="muted">Calories: <strong>${session.calories}</strong></div></div>
+                            <div style="margin-top:8px"><div class="muted">Notes: ${session.notes || '-'}</div></div>
+                            <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
+                            <div style="margin-top:8px"><button class="trash" data-id="${session.id}" title="Delete session">Delete</button></div>`;
+          card.appendChild(meta);
+
+          const exWrap = document.createElement('div'); exWrap.className = 'exercises';
+          const table = document.createElement('table');
+          const thead = document.createElement('thead');
+          if(session.type === 'cardio'){
+            thead.innerHTML = `<tr><th>Exercise</th><th>Duration (min)</th><th>Calories</th><th></th></tr>`;
+            const tbody = document.createElement('tbody');
+            session.exercises.forEach(ex=>{
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td><strong>${ex.name}</strong></td>
+                              <td><input type="number" min="1" value="${ex.durationMin}" data-session="${session.id}" data-ex="${ex.id}" data-prop="duration" class="small-input" /></td>
+                              <td><input type="number" min="0" value="${ex.calories || 0}" data-session="${session.id}" data-ex="${ex.id}" data-prop="cal" class="small-input" /></td>
+                              <td></td>`;
+              tbody.appendChild(tr);
+            });
+            table.appendChild(thead); table.appendChild(tbody);
+          } else {
+            thead.innerHTML = `<tr><th>Exercise</th><th>Weight (kg)</th><th>Sets</th><th>Reps</th></tr>`;
+            const tbody = document.createElement('tbody');
+            session.exercises.forEach(ex=>{
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td><strong>${ex.name}</strong></td>
+                              <td><input type="number" step="0.5" min="0" value="${ex.weightKg}" data-session="${session.id}" data-ex="${ex.id}" data-prop="weight" class="small-input" /></td>
+                              <td><input type="number" min="1" value="${ex.sets}" data-session="${session.id}" data-ex="${ex.id}" data-prop="sets" class="small-input" /></td>
+                              <td><input type="number" min="1" value="${ex.reps}" data-session="${session.id}" data-ex="${ex.id}" data-prop="reps" class="small-input" /></td>`;
+              tbody.appendChild(tr);
+            });
+            table.appendChild(thead); table.appendChild(tbody);
+          }
+          exWrap.appendChild(table);
+          card.appendChild(exWrap);
+          container.appendChild(card);
+        });
       }
 
-      initUI();
+      area.appendChild(container);
+
+      // Wire up buttons inside plan
+      qsa('.done-btn').forEach(btn=>{
+        btn.addEventListener('click', (ev)=>{
+          const id = btn.dataset.id;
+          toggleDone(id);
+        });
+      });
+      qsa('.trash').forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          const id = btn.dataset.id;
+          if(confirm('Delete this session?')) { deleteSession(id); }
+        });
+      });
+
+      // Inline edits for inputs (weight/sets/reps/duration/cal)
+      qsa('input[data-session]').forEach(inp=>{
+        inp.addEventListener('change', ()=> {
+          const sessId = inp.dataset.session;
+          const exId = inp.dataset.ex;
+          const prop = inp.dataset.prop;
+          const valRaw = inp.value;
+          applyInlineEdit(sessId, exId, prop, valRaw);
+        });
+      });
+
+      // export now button (top-right)
+      const expBtn = qs('#exportNow');
+      if(expBtn) expBtn.addEventListener('click', ()=> {
+        const plan = loadPlan();
+        qs('#exportBox').value = JSON.stringify(plan, null, 2);
+        navigator.clipboard?.writeText(JSON.stringify(plan, null, 2)).then(()=> alert('Plan JSON copied to clipboard.'), ()=> alert('Export placed in box.'));
+      });
+    }
+
+    function applyInlineEdit(sessionId, exId, prop, raw){
+      const plan = loadPlan();
+      const s = plan.find(x=>x.id===sessionId);
+      if(!s) return;
+      const ex = s.exercises.find(e=>e.id===exId);
+      if(!ex) return;
+      let value;
+      if(prop === 'weight') value = Math.max(0, parseFloat(raw || 0));
+      else if(prop === 'sets' || prop === 'reps' || prop === 'duration') value = Math.max(1, parseInt(raw || 1));
+      else if(prop === 'cal') value = Math.max(0, parseInt(raw || 0));
+      else value = raw;
+      if(prop === 'cal') ex.calories = value;
+      else if(prop === 'duration') ex.durationMin = value;
+      else if(prop === 'weight') ex.weightKg = value;
+      else ex[prop] = value;
+      savePlan(plan);
+      renderPlan();
+    }
+
+    function toggleDone(id){
+      const plan = loadPlan();
+      const s = plan.find(x=>x.id===id);
+      if(!s) return;
+      s.done = !s.done;
+      savePlan(plan);
+      renderPlan();
+    }
+
+    function deleteSession(id){
+      let plan = loadPlan();
+      plan = plan.filter(s => s.id !== id);
+      savePlan(plan);
+      renderPlan();
+    }
+
+    function addSession(){
+      const session = readSessionFromForm();
+      if(session.exercises.length === 0){
+        alert('Please select at least one exercise for the session.');
+        return;
+      }
+      const plan = loadPlan();
+      plan.push(session);
+      savePlan(plan);
+      renderPlan();
+      // clear checkboxes
+      qsa('#exercisesArea input[type="checkbox"]').forEach(cb=>cb.checked=false);
+      qs('#sessionCalories').value = 0;
+      qs('#sessionNotes').value = '';
+      showStatus('Session added.', true);
+    }
+
+    function clearAllSessions(){
+      if(confirm('Delete all saved sessions?')){ savePlan([]); renderPlan(); showStatus('All sessions cleared.'); }
+    }
+
+    // Export/Import wiring
+    function exportPlanToBox(){
+      const plan = loadPlan();
+      qs('#exportBox').value = JSON.stringify(plan, null, 2);
+      navigator.clipboard?.writeText(JSON.stringify(plan, null, 2)).then(()=> alert('Plan JSON copied to clipboard.'), ()=> alert('Export placed in box.'));
+    }
+    function importPlanFromBox(){
+      const raw = qs('#exportBox').value.trim();
+      if(!raw){ alert('Paste plan JSON into the box to import.'); return; }
+      try{
+        const parsed = JSON.parse(raw);
+        if(!Array.isArray(parsed)) {
+          // support wrapped format if older export was an object
+          if(parsed.days && Array.isArray(parsed.days)) {
+            // transform to sessions array (if present as object)
+            const sessions = parsed.days.map(d => {
+              // attempt to standardize
+              return {
+                id: d.id || ('s'+Date.now()),
+                date: d.date || fmtDate(new Date()),
+                weekday: d.weekday || '',
+                type: d.type || 'leg',
+                calories: d.calories || 0,
+                notes: '',
+                exercises: d.exercises || [],
+                done: d.done || false
+              };
+            });
+            savePlan(sessions);
+            renderPlan();
+            alert('Imported plan (converted) and saved.');
+            return;
+          }
+          throw new Error('Expected JSON array of sessions.');
+        }
+        // basic validation: ensure structure minimal
+        const ok = parsed.every(s => s.id && s.date && Array.isArray(s.exercises));
+        if(!ok) throw new Error('Invalid session structure.');
+        savePlan(parsed);
+        renderPlan();
+        alert('Plan imported and saved.');
+      }catch(e){
+        alert('Import failed: ' + (e && e.message ? e.message : e));
+      }
+    }
+
+    // Status small helper
+    function showStatus(msg, ok=true){
+      // small transient message using alert-like simple approach
+      // keep minimal: use alert? we'll use small floating message
+      // but to keep code simple, use window.alert for error & console for success
+      if(!ok) alert(msg);
+      else console.log(msg);
+    }
+
+    // Init wiring
+    function init(){
+      // default date = today
+      if(!qs('#sessionDate').value) qs('#sessionDate').value = fmtDate(new Date());
+      // build initial exercises UI
+      const typeSelect = qs('#workoutType');
+      buildExercisesUI(typeSelect.value);
+      typeSelect.addEventListener('change', ()=> {
+        buildExercisesUI(typeSelect.value);
+      });
+
+      qs('#addSessionBtn').addEventListener('click', addSession);
+      qs('#clearAllBtn').addEventListener('click', clearAllSessions);
+      qs('#exportBtn').addEventListener('click', exportPlanToBox);
+      qs('#importBtn').addEventListener('click', importPlanFromBox);
+
+      // render stored plan
+      renderPlan();
     }
 
     init();
