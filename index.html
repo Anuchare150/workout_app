@@ -2,39 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Workout Planner — Visible Selections (Fixed)</title>
+  <title>Workout Planner — Checkbox Fix</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <style>
     :root{
-      --bg1:#0b1220;
-      --bg2:#0f2540;
+      --bg1:#071126; --bg2:#0d2444;
       --panel: rgba(255,255,255,0.03);
-      --muted: rgba(255,255,255,0.72);
-      --accent1: #7c3aed;
-      --accent2: #06b6d4;
-      --accent-strong: #4f46e5;
-      --good: #10b981;
-      --danger: #ef4444;
-      --card-radius:12px;
+      --muted: rgba(255,255,255,0.75);
+      --accent1:#6d28d9; --accent2:#06b6d4;
       --input-bg:#0f2238;
-      --input-border: rgba(255,255,255,0.10);
-      --highlight-bg: rgba(79,70,229,0.12);
-      --max-width:1100px;
+      --card-radius:12px;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#ffffff;padding:18px;-webkit-font-smoothing:antialiased;
+      color:#fff;padding:18px;-webkit-font-smoothing:antialiased;
     }
-
-    .container{max-width:var(--max-width);margin:0 auto}
-    .app{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:var(--card-radius);padding:16px;border:1px solid rgba(255,255,255,0.03)}
-
+    .app{max-width:1060px;margin:0 auto;background:rgba(255,255,255,0.01);padding:16px;border-radius:var(--card-radius);border:1px solid rgba(255,255,255,0.03)}
     header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
     h1{margin:0;font-size:18px}
     p.lead{margin:0;color:var(--muted);font-size:13px}
 
@@ -42,189 +30,129 @@
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
     label.small{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 
-    /* Inputs: Mobile friendly */
     input, select, textarea {
-      width:100%;
-      padding:10px;
-      border-radius:8px;
-      border:1px solid var(--input-border);
-      background: var(--input-bg);
-      color: #fff;
-      font-size:16px;
-      -webkit-text-fill-color: #fff;
-      caret-color: #fff;
-      -webkit-appearance: none;
-      appearance: none;
+      width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:var(--input-bg);color:#fff;font-size:16px;
+      -webkit-text-fill-color:#fff; -webkit-appearance:none; appearance:none;
     }
-
-    /* small inline inputs */
-    .small-input {
-      min-width:72px;
-      max-width:140px;
-      padding:8px;
-      border-radius:8px;
-      border:1px solid var(--input-border);
-      background: var(--input-bg);
-      color:#fff;
-      font-size:16px;
-      -webkit-text-fill-color:#fff;
-      caret-color:#fff;
-      -webkit-appearance: none;
-      appearance: none;
-      text-align:center;
-    }
-
-    /* number inputs appearance consistency */
-    input[type="number"]{-moz-appearance:textfield;}
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    ::placeholder { color: rgba(255,255,255,0.45); opacity:1; }
+    ::placeholder{color:rgba(255,255,255,0.45)}
 
     .col-3{grid-column:span 3}
-    .col-2{grid-column:span 2}
     .col-4{grid-column:span 4}
     .col-6{grid-column:span 6}
     .col-12{grid-column:span 12}
     .actions{display:flex;gap:8px;align-items:center}
-    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#ffffff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
-    button.ghost{background:transparent;color:#ffffff;border:1px solid rgba(255,255,255,0.12)}
+    button{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;padding:10px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
 
-    /* Exercises list with clear selected visuals */
+    /* Exercises list: use native checkbox and large tap area */
     .ex-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
     .ex-item{
-      display:flex;gap:12px;align-items:center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));
-      padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
-      transition: background .18s, box-shadow .18s, border-color .18s;
+      display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+      background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.003));
+      transition:background .12s,box-shadow .12s;
     }
-    .ex-item.selected{
-      background: var(--highlight-bg);
-      border-color: rgba(79,70,229,0.28);
-      box-shadow: 0 6px 18px rgba(79,70,229,0.08);
+    .ex-item.selected{background:linear-gradient(180deg, rgba(109,40,217,0.10), rgba(6,182,212,0.03));box-shadow:0 8px 20px rgba(2,6,23,0.12)}
+    .ex-left{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .ex-name{font-weight:700}
+    /* keep native checkbox visible and large */
+    .ex-checkbox{
+      width:22px;height:22px;flex:0 0 22px;cursor:pointer;
+      accent-color: #6d28d9; /* modern browsers */
     }
-    .ex-name{min-width:140px;font-weight:700;color:#fff}
-    .ex-controls{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
+    .ex-controls{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .small-input{min-width:72px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--input-bg);color:#fff;text-align:center;font-size:15px}
 
-    /* Custom checkbox (visible on all platforms) */
-    .checkbox-wrap{position:relative;display:inline-flex;align-items:center;gap:8px}
-    .checkbox-hidden{position:absolute;opacity:0;pointer-events:none;height:0;width:0}
-    .custom-checkbox{
-      width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.12);display:inline-flex;align-items:center;justify-content:center;
-      background:transparent;color:transparent;transition:all .12s;
-      flex:0 0 22px;
-    }
-    .custom-checkbox svg{width:14px;height:14px;opacity:0;transform:scale(0.6);transition:all .12s}
-    .ex-item.selected .custom-checkbox{background:linear-gradient(90deg,var(--accent-strong),var(--accent2));border-color:transparent;color:#fff}
-    .ex-item.selected .custom-checkbox svg{opacity:1;transform:scale(1)}
-    /* make clicking the name toggle checkbox */
-    .ex-name[role="button"]{cursor:pointer}
-
-    .plan{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-    .session{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.01);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-    .session .meta{width:170px;flex-shrink:0}
-    .session .date{font-weight:800}
-    .session .weekday{color:var(--muted);font-size:13px;margin-top:4px}
-    table{width:100%;border-collapse:collapse;color:#ffffff;font-size:14px}
+    .plan{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+    .session{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.003), rgba(255,255,255,0.001))}
+    .meta{width:180px}
+    .date{font-weight:800}
+    .weekday{color:var(--muted);font-size:13px;margin-top:4px}
+    table{width:100%;border-collapse:collapse;color:#fff;font-size:14px}
     th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.05)}
     th{color:var(--muted);font-weight:700;font-size:13px}
-    .done-btn{margin-left:auto;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
-    .done-btn.false{background:linear-gradient(90deg,#7c3aed,#06b6d4)}
+    .done-btn{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border:0;cursor:pointer}
+    .trash{background:transparent;border:0;color:#ff7b7b;cursor:pointer}
 
-    .controls{display:flex;gap:8px;align-items:center}
-    .exportbox{width:100%;height:92px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:#fff;resize:vertical}
-
-    .trash{background:transparent;border:0;color:var(--danger);cursor:pointer;font-weight:700;padding:6px}
-    .download-buttons{display:flex;gap:8px;margin-left:8px}
-
+    .exportbox{width:100%;height:90px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#fff;resize:vertical}
     .muted{color:var(--muted);font-size:13px}
 
-    @media (max-width:900px){
+    @media(max-width:880px){
       .col-3{grid-column:span 6}
-      .col-2{grid-column:span 6}
       .meta{width:140px}
-      .small-input{min-width:60px;padding:8px;font-size:15px}
+      .small-input{min-width:60px}
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="app" role="application" aria-label="Workout Planner">
-      <header>
-        <div class="logo">WP</div>
-        <div>
-          <h1>Workout Planner</h1>
-          <p class="lead">Leg, Upper Body, Cardio — set kg, sets, reps, and durations. Selections are now clearly visible.</p>
-        </div>
-      </header>
-
-      <div class="panel">
-        <form id="sessionForm" onsubmit="return false;">
-          <div class="grid">
-            <div class="col-3">
-              <label class="small">Date</label>
-              <input id="sessionDate" type="date" />
-            </div>
-            <div class="col-3">
-              <label class="small">Workout type</label>
-              <select id="workoutType" aria-label="Workout type">
-                <option value="leg">Leg Workout</option>
-                <option value="upper">Upper Body</option>
-                <option value="cardio">Cardio</option>
-              </select>
-            </div>
-            <div class="col-3">
-              <label class="small">Session calories (kcal)</label>
-              <input id="sessionCalories" type="number" inputmode="numeric" value="0" min="0" />
-            </div>
-            <div class="col-3">
-              <label class="small">Notes</label>
-              <input id="sessionNotes" type="text" placeholder="e.g., focus on form" />
-            </div>
-
-            <div class="col-12">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-                <div style="font-weight:800">Exercises</div>
-                <div class="muted">Tap an exercise or its name to select. Selected items are highlighted.</div>
-              </div>
-              <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
-            </div>
-
-            <div class="col-12" style="display:flex;gap:8px;align-items:center;margin-top:8px">
-              <div class="actions">
-                <button id="addSessionBtn" type="button">Add Session</button>
-                <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
-              </div>
-              <div style="margin-left:auto" class="muted">Saved locally on this device.</div>
-            </div>
-          </div>
-        </form>
+  <div class="app" role="application" aria-label="Workout Planner">
+    <header>
+      <div class="logo">WP</div>
+      <div>
+        <h1>Workout Planner</h1>
+        <p class="lead">Leg / Upper / Cardio — select exercises, set kg / sets / reps or duration.</p>
       </div>
+    </header>
 
-      <div id="planArea" class="plan"></div>
-
-      <div class="panel" style="margin-top:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div>
-            <strong>Backup & Restore Data</strong>
-            <div class="muted" style="margin-top:4px">Copy JSON to back up or paste to restore.</div>
+    <div class="panel" aria-label="Session builder">
+      <form id="sessionForm" onsubmit="return false;">
+        <div class="grid">
+          <div class="col-3">
+            <label class="small">Date</label>
+            <input id="sessionDate" type="date" />
           </div>
-          <div class="controls">
-            <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
-            <button id="importBtn" class="ghost" type="button">Load JSON</button>
-            <div class="download-buttons">
-              <button id="downloadCss" class="ghost" type="button">Download CSS</button>
-              <button id="downloadJs" class="ghost" type="button">Download JS</button>
+          <div class="col-3">
+            <label class="small">Workout type</label>
+            <select id="workoutType">
+              <option value="leg">Leg Workout</option>
+              <option value="upper">Upper Body</option>
+              <option value="cardio">Cardio</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label class="small">Session calories (kcal)</label>
+            <input id="sessionCalories" type="number" min="0" value="0" />
+          </div>
+          <div class="col-3">
+            <label class="small">Notes</label>
+            <input id="sessionNotes" type="text" placeholder="optional" />
+          </div>
+
+          <div class="col-12">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-weight:800">Exercises</div>
+              <div class="muted">Tap the left area or checkbox to select. Selected items are highlighted.</div>
             </div>
+            <div id="exercisesArea" class="ex-list" aria-live="polite"></div>
+          </div>
+
+          <div class="col-12" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <div class="actions">
+              <button id="addSessionBtn" type="button">Add Session</button>
+              <button id="clearAllBtn" type="button" class="ghost">Clear All</button>
+            </div>
+            <div style="margin-left:auto" class="muted">Saved locally on this device (no cloud).</div>
           </div>
         </div>
-        <textarea id="exportBox" class="exportbox" placeholder="Your data JSON will appear here..."></textarea>
+      </form>
+    </div>
+
+    <div id="planArea" class="plan"></div>
+
+    <div class="panel" style="margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div><strong>Backup / Restore</strong><div class="muted">Copy JSON out or paste to restore.</div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="exportBtn" class="ghost" type="button">Copy JSON</button>
+          <button id="importBtn" class="ghost" type="button">Load JSON</button>
+        </div>
       </div>
+      <textarea id="exportBox" class="exportbox" placeholder="Data JSON will appear here"></textarea>
     </div>
   </div>
 
   <script>
-    // Fixes selection visibility: toggles .selected and shows a custom checkbox tick.
-    const STORAGE_KEY = 'workout_planner_selected_fix_v1';
+    // Ensure checkboxes are tappable: native inputs + click-on-item toggling (ignoring control clicks).
+    const STORAGE_KEY = 'workout_planner_checkbox_fixed_v1';
 
     const CATALOG = {
       leg: [
@@ -255,42 +183,37 @@
     function loadPlan(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
     function savePlan(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 
+    // Build exercise list with native checkboxes and controls
     function buildExercisesUI(type){
-      const area = qs('#exercisesArea');
-      area.innerHTML = '';
-      (CATALOG[type] || []).forEach(ex=>{
+      const area = qs('#exercisesArea'); area.innerHTML = '';
+      (CATALOG[type] || []).forEach(ex => {
         const item = document.createElement('div');
         item.className = 'ex-item';
-        // checkbox wrap
-        const wrap = document.createElement('label');
-        wrap.className = 'checkbox-wrap';
-        wrap.style.margin = '0';
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'checkbox-hidden';
-        checkbox.dataset.ex = ex.id;
-        checkbox.id = 'ck_' + ex.id;
-        // custom visual
-        const custom = document.createElement('span');
-        custom.className = 'custom-checkbox';
-        custom.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        wrap.appendChild(checkbox);
-        wrap.appendChild(custom);
-
+        // left clickable area (checkbox + name)
+        const left = document.createElement('div');
+        left.className = 'ex-left';
+        // checkbox input (native and visible)
+        const ck = document.createElement('input');
+        ck.type = 'checkbox';
+        ck.className = 'ex-checkbox';
+        ck.id = 'ck_' + ex.id;
+        ck.dataset.ex = ex.id;
+        // name element
         const name = document.createElement('div');
         name.className = 'ex-name';
         name.textContent = ex.name;
-        name.setAttribute('role','button');
-        name.setAttribute('tabindex','0');
 
-        // controls container
+        left.appendChild(ck);
+        left.appendChild(name);
+        item.appendChild(left);
+
+        // controls on the right
         const controls = document.createElement('div');
         controls.className = 'ex-controls';
-
         if(type === 'cardio'){
-          const dur = document.createElement('input'); dur.type = 'number'; dur.min = 1; dur.value = ex.defaultDuration || 20; dur.className = 'small-input'; dur.dataset.prop = 'duration';
-          const durLabel = document.createElement('div'); durLabel.className = 'muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
-          const cal = document.createElement('input'); cal.type = 'number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories';
+          const dur = document.createElement('input'); dur.type='number'; dur.min=1; dur.value = ex.defaultDuration || 20; dur.className='small-input'; dur.dataset.prop='duration';
+          const durLabel = document.createElement('div'); durLabel.className='muted'; durLabel.style.fontSize='12px'; durLabel.textContent='min';
+          const cal = document.createElement('input'); cal.type='number'; cal.min=0; cal.value=0; cal.className='small-input'; cal.dataset.prop='calories';
           controls.appendChild(dur); controls.appendChild(durLabel); controls.appendChild(cal);
         } else {
           const weight = document.createElement('input'); weight.type='number'; weight.step='0.5'; weight.className='small-input'; weight.value = ex.defaultWeight || 0; weight.dataset.prop='weight';
@@ -299,32 +222,37 @@
           const reps = document.createElement('input'); reps.type='number'; reps.min=1; reps.className='small-input'; reps.value = ex.reps || 10; reps.dataset.prop='reps';
           controls.appendChild(weight); controls.appendChild(kg); controls.appendChild(sets); controls.appendChild(reps);
         }
-
-        item.appendChild(wrap);
-        item.appendChild(name);
         item.appendChild(controls);
+
+        // checkbox change toggles visual
+        ck.addEventListener('change', () => {
+          if(ck.checked) item.classList.add('selected'); else item.classList.remove('selected');
+        });
+
+        // Make tapping the left area toggle the checkbox (but not when user taps a control)
+        left.addEventListener('click', (ev) => {
+          // if user clicked directly on a control inside left (rare), ignore; otherwise toggle
+          if(ev.target.tagName === 'INPUT' || ev.target.tagName === 'BUTTON' || ev.target.tagName === 'SELECT') return;
+          ck.checked = !ck.checked;
+          ck.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        // keyboard accessibility on name
+        name.tabIndex = 0;
+        name.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ck.checked = !ck.checked; ck.dispatchEvent(new Event('change', { bubbles: true })); }
+        });
+
         area.appendChild(item);
-
-        // Toggle selection visuals when checkbox changes
-        const toggleSelected = () => {
-          if(checkbox.checked) item.classList.add('selected'); else item.classList.remove('selected');
-        };
-        checkbox.addEventListener('change', toggleSelected);
-
-        // Clicking the name toggles checkbox (improves tap area)
-        name.addEventListener('click', ()=> { checkbox.checked = !checkbox.checked; toggleSelected(); });
-        name.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); checkbox.checked = !checkbox.checked; toggleSelected(); } });
-
-        // Ensure initial state not selected
-        toggleSelected();
       });
     }
 
+    // Read session data
     function readSessionForm(){
       const date = qs('#sessionDate').value || fmtDate(new Date());
       const type = qs('#workoutType').value;
       const exercises = [];
-      qsa('#exercisesArea .ex-item').forEach(item=>{
+      qsa('#exercisesArea .ex-item').forEach(item => {
         const ck = item.querySelector('input[type="checkbox"]');
         if(!ck || !ck.checked) return;
         const exId = ck.dataset.ex;
@@ -353,70 +281,35 @@
       };
     }
 
+    // Render saved sessions
     function renderPlan(){
       const plan = loadPlan();
-      const area = qs('#planArea');
-      area.innerHTML = '';
+      const area = qs('#planArea'); area.innerHTML = '';
       if(!plan.length){
-        area.innerHTML = '<div class="panel muted">No workout sessions recorded yet.</div>';
-        return;
+        area.innerHTML = '<div class="panel muted">No sessions saved yet.</div>'; return;
       }
-      plan.forEach(session=>{
+      plan.forEach(s => {
         const card = document.createElement('div'); card.className = 'session';
         const meta = document.createElement('div'); meta.className = 'meta';
-        meta.innerHTML = `<div class="date">${session.date}</div>
-                          <div class="weekday">${session.weekday} · ${session.type.toUpperCase()}</div>
-                          <div style="margin-top:6px" class="muted">Kcal: ${session.calories}</div>
-                          <div class="muted" style="font-size:12px;margin-top:4px">${session.notes ? 'Note: '+session.notes : ''}</div>
-                          <div style="margin-top:10px"><button class="done-btn ${session.done ? 'true' : 'false'}" data-id="${session.id}">${session.done ? 'Done' : 'Mark Done'}</button></div>
-                          <div style="margin-top:8px"><button class="trash" data-id="${session.id}">Delete</button></div>`;
+        meta.innerHTML = `<div class="date">${s.date}</div>
+                          <div class="weekday">${s.weekday} · ${s.type.toUpperCase()}</div>
+                          <div style="margin-top:6px" class="muted">Kcal: ${s.calories}</div>
+                          <div class="muted" style="font-size:12px;margin-top:4px">${s.notes ? 'Note: '+s.notes : ''}</div>
+                          <div style="margin-top:10px"><button class="done-btn" data-id="${s.id}">${s.done ? 'Done' : 'Mark Done'}</button></div>
+                          <div style="margin-top:8px"><button class="trash" data-id="${s.id}">Delete</button></div>`;
         card.appendChild(meta);
 
         const exWrap = document.createElement('div'); exWrap.style.flexGrow = '1';
         const table = document.createElement('table');
-        let thead = '<thead>';
-        if(session.type === 'cardio') thead += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
-        else thead += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
-        let tbody = '<tbody>';
-        session.exercises.forEach(ex=>{
-          if(session.type === 'cardio'){
-            tbody += `<tr><td><strong>${ex.name}</strong></td>
-                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="durationMin" value="${ex.durationMin}"></td>
-                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="calories" value="${ex.calories||0}"></td>
-                      <td></td></tr>`;
+        let head = '<thead>';
+        if(s.type === 'cardio') head += '<tr><th>Exercise</th><th>Min</th><th>Kcal</th><th></th></tr></thead>';
+        else head += '<tr><th>Exercise</th><th>Kg</th><th>Sets</th><th>Reps</th></tr></thead>';
+        let body = '<tbody>';
+        s.exercises.forEach(e => {
+          if(s.type === 'cardio'){
+            body += `<tr><td><strong>${e.name}</strong></td>
+                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="durationMin" value="${e.durationMin}"></td>
+                     <td><input class="small-input" type="number" data-sid="${s.id}" data-eid="${e.id}" data-field="calories" value="${e.calories||0}"></td>
+                     <td></td></tr>`;
           } else {
-            tbody += `<tr><td><strong>${ex.name}</strong></td>
-                      <td><input class="small-input" type="number" inputmode="decimal" step="0.5" data-sid="${session.id}" data-eid="${ex.id}" data-field="weightKg" value="${ex.weightKg}"></td>
-                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="sets" value="${ex.sets}"></td>
-                      <td><input class="small-input" type="number" inputmode="numeric" data-sid="${session.id}" data-eid="${ex.id}" data-field="reps" value="${ex.reps}"></td></tr>`;
-          }
-        });
-        tbody += '</tbody>';
-        table.innerHTML = thead + tbody;
-        exWrap.appendChild(table);
-        card.appendChild(exWrap);
-        area.appendChild(card);
-      });
-
-      // wire plan controls
-      qsa('.done-btn').forEach(b => b.addEventListener('click', ()=>{
-        const id = b.dataset.id;
-        const p = loadPlan(); const s = p.find(x=>x.id===id); if(s){ s.done = !s.done; savePlan(p); renderPlan(); }
-      }));
-      qsa('.trash').forEach(b => b.addEventListener('click', ()=>{
-        if(!confirm('Delete session?')) return;
-        const id = b.dataset.id;
-        const p = loadPlan().filter(s => s.id !== id);
-        savePlan(p); renderPlan();
-      }));
-
-      // inline edits: update on input for instant save (use input & blur events)
-      qsa('input[data-sid]').forEach(inp=>{
-        inp.addEventListener('input', () => {
-          const sid = inp.dataset.sid, eid = inp.dataset.eid, field = inp.dataset.field;
-          const p = loadPlan(); const s = p.find(x=>x.id===sid); if(!s) return;
-          const ex = s.exercises.find(x=>x.id===eid); if(!ex) return;
-          if(field === 'weightKg') ex.weightKg = parseFloat(inp.value) || 0;
-          else ex[field] = parseInt(inp.value) || 0;
-          savePlan(p);
-        });
+            body += `<tr><td><strong>${e.name}</strong></td>
